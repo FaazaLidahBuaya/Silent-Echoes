@@ -22,7 +22,7 @@ public class DrawerController : MonoBehaviour
     public AudioClip sfxTerkunci;
 
     private bool isMembukaAtauMenutup = false;
-    private bool isOpen = false;
+    public bool isOpen { get; private set; } = false;
 
     void Start()
     {

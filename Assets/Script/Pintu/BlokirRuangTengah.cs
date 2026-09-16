@@ -49,6 +49,11 @@ public class BlokirRuangTengah : MonoBehaviour
             // Memanggil fungsi TampilkanSubtitle dari skrip mana saja cukup dengan 1 baris ini:
             SubtitleManager.Instance.TampilkanSubtitle("(Sebaiknya aku menunggu di ruang tamu dulu.)", 2.5f);
         }
+
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Tunggu kakek di ruang tamu", "Duduklah di sofa ruang tamu");
+        }
         
         yield return new WaitForSeconds(2.5f); // Beri waktu pemain membaca teks
 

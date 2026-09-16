@@ -20,19 +20,53 @@ public class TuasListrik : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip sfxTuasDitarik;
     public AudioClip sfxListrikMati;
+    public AudioClip sfxBukaBautObeng;
+    public AudioClip sfxPasangFuse;
+    public AudioClip sfxListrikNyalaStabil;
 
-    private bool sudahDitarik = false;
+    [Header("Item Quest Dibutuhkan")]
+    public string namaObeng = "Obeng";
+    public string namaFuse = "Fuse"; // Sesuaikan dengan namaItem di ItemPickup
+
+    [Header("Status Saklar & Perbaikan")]
+    public bool sudahDitarik { get; private set; } = false;
+    public bool sedangProses { get; private set; } = false;
+    public bool coverTerbuka { get; private set; } = false;
+    public bool fuseTerpasang { get; private set; } = false;
+    public bool sudahDiperbaiki { get; private set; } = false;
+    public bool listrikMenyalaStabil { get; private set; } = false;
+
+    // Objek 3D visual jika ada (opsional)
+    [Header("Objek Visual Opsional")]
+    public GameObject objekCoverSaklar;
+    public GameObject objekFuseDalamSaklar;
 
     public void InteraksiTuas()
     {
+        // Jika sedang animasi berjalan ATAU listrik sudah berhasil dinyalakan permanen, tolak interaksi!
+        if (sedangProses || listrikMenyalaStabil) return;
+
+        // FASE 1: Tarik pertama kali (mati lampu)
         if (!sudahDitarik)
         {
             StartCoroutine(ProsesLampuMati());
+            return;
         }
+
+        // FASE 2: Saklar rusak, butuh perbaikan
+        if (!sudahDiperbaiki)
+        {
+            CobaPerbaikiSaklar();
+            return;
+        }
+
+        // FASE 3: Sudah diperbaiki, nyalakan listrik stabil
+        StartCoroutine(ProsesLampuNyalaStabil());
     }
 
     IEnumerator ProsesLampuMati()
     {
+        sedangProses = true;
         sudahDitarik = true;
 
         // 1. SUARA & ANIMASI TUAS DITARIK
@@ -94,6 +128,168 @@ public class TuasListrik : MonoBehaviour
         if (SubtitleManager.Instance != null)
         {
             SubtitleManager.Instance.TampilkanSubtitle("(Sepertinya saklar nya rusak, aku harus memperbaikinya)", 3f);
+        }
+
+        // 6. UPDATE QUEST PETUNJUK
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Perbaiki saklar listrik", "Cari obeng dan sekring cadangan");
+        }
+
+        sedangProses = false;
+    }
+
+    void CobaPerbaikiSaklar()
+    {
+        if (InventoryManager.Instance == null) return;
+
+        bool punyaObeng = InventoryManager.Instance.CekItem(namaObeng);
+        bool punyaFuse = InventoryManager.Instance.CekItem(namaFuse);
+
+        // Kasus 1: Belum buka cover dan belum bawa obeng
+        if (!coverTerbuka && !punyaObeng)
+        {
+            if (SubtitleManager.Instance != null)
+            {
+                SubtitleManager.Instance.TampilkanSubtitle("(Penutup saklar ini terkunci baut. Aku butuh obeng)", 2.5f);
+            }
+            return;
+        }
+
+        // Kasus 2: Punya obeng, buka cover saklar
+        if (!coverTerbuka && punyaObeng)
+        {
+            coverTerbuka = true;
+            if (audioSource != null && sfxBukaBautObeng != null)
+            {
+                audioSource.PlayOneShot(sfxBukaBautObeng);
+            }
+
+            if (objekCoverSaklar != null)
+            {
+                objekCoverSaklar.SetActive(false); // Buka penutupnya
+            }
+
+            if (!punyaFuse)
+            {
+                if (SubtitleManager.Instance != null)
+                {
+                    SubtitleManager.Instance.TampilkanSubtitle("(Baut terbuka. Sekring di dalamnya terbakar, aku butuh sekring cadangan)", 3f);
+                }
+                if (QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.SetQuest("Pasang sekring cadangan", "Cari sekring (fuse) di sekitar rumah");
+                }
+            }
+            else
+            {
+                // Jika sudah bawa sekring sekaligus
+                PasangSekring();
+            }
+            return;
+        }
+
+        // Kasus 3: Cover sudah terbuka, tapi belum bawa sekring
+        if (coverTerbuka && !punyaFuse)
+        {
+            if (SubtitleManager.Instance != null)
+            {
+                SubtitleManager.Instance.TampilkanSubtitle("(Sekring masih kosong. Aku harus memasukkan sekring cadangan)", 2.5f);
+            }
+            return;
+        }
+
+        // Kasus 4: Cover sudah terbuka dan punya sekring -> Pasang sekring
+        if (coverTerbuka && punyaFuse)
+        {
+            PasangSekring();
+        }
+    }
+
+    void PasangSekring()
+    {
+        fuseTerpasang = true;
+        sudahDiperbaiki = true;
+
+        if (audioSource != null && sfxPasangFuse != null)
+        {
+            audioSource.PlayOneShot(sfxPasangFuse);
+        }
+
+        if (objekFuseDalamSaklar != null)
+        {
+            objekFuseDalamSaklar.SetActive(true);
+        }
+
+        // Hapus sekring dari inventory karena sudah digunakan
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.HapusItem(namaFuse);
+        }
+
+        if (SubtitleManager.Instance != null)
+        {
+            SubtitleManager.Instance.TampilkanSubtitle("(Sekring baru terpasang! Sekarang saklar siap dinyalakan kembali)", 3f);
+        }
+
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Nyalakan kembali saklar", "Tarik tuas saklar listrik");
+        }
+    }
+
+    IEnumerator ProsesLampuNyalaStabil()
+    {
+        sedangProses = true;
+
+        if (audioSource != null && sfxTuasDitarik != null)
+        {
+            audioSource.PlayOneShot(sfxTuasDitarik);
+        }
+
+        // Kembalikan tuas ke posisi awal (atau putar balik)
+        if (engselTuas != null)
+        {
+            Quaternion rotasiAwal = engselTuas.localRotation;
+            Quaternion rotasiAkhir = rotasiAwal * Quaternion.Euler(-sudutDitarik);
+            float waktu = 0;
+            while (waktu < 1f)
+            {
+                waktu += Time.deltaTime * kecepatanTarik;
+                engselTuas.localRotation = Quaternion.Slerp(rotasiAwal, rotasiAkhir, waktu);
+                yield return null;
+            }
+            engselTuas.localRotation = rotasiAkhir;
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        // Nyalakan lampu (hanya lampu gudang / ruangan saklar yang menyala)
+        AturStatusLampu(true);
+        AturIntensitasLampu(2.5f); 
+
+        if (audioSource != null && sfxListrikNyalaStabil != null)
+        {
+            audioSource.PlayOneShot(sfxListrikNyalaStabil);
+        }
+
+        listrikMenyalaStabil = true; // Kunci permanen: listrik sudah stabil, tidak bisa ditarik lagi
+        sedangProses = false;
+
+        // Jeda 6 detik setelah lampu menyala sebelum player menyadari hanya lampu gudang yang menyala
+        yield return new WaitForSeconds(6.0f);
+
+        if (SubtitleManager.Instance != null)
+        {
+            SubtitleManager.Instance.TampilkanSubtitle("(Kenapa hanya lampu gudang yang menyala...?)", 3.5f);
+        }
+
+        // Jeda 5 detik setelah subtitle muncul kemudian telepon berdering
+        yield return new WaitForSeconds(5.0f);
+
+        if (TeleponRumah.Instance != null)
+        {
+            TeleponRumah.Instance.MulaiBerdering();
         }
     }
 

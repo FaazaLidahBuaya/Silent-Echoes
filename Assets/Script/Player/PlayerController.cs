@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public GameObject tanganKanan; 
     [Tooltip("Masukkan HANYA objek visual/model tangannya saja ke sini (tanpa cahaya)")]
     public GameObject visualTangan; 
+    [Tooltip("Masukkan objek visual/model korek api dan api sprite ke sini (tanpa Point Light cahaya)")]
+    public GameObject visualKorek;
 
     [Header("Pengaturan Gerak & Lari")]
     public float kecepatanJalan = 4f;
@@ -39,19 +41,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // JIKA SEDANG CUTSCENE, MATIKAN VISUAL TANGAN SAJA & KUNCI PERGERAKAN
+        // Pastikan tangan dan korek tetap aktif jika player sudah membawa barang (termasuk saat cutscene)
+        if (sedangBawaBarang)
+        {
+            if (visualTangan != null) visualTangan.SetActive(true);
+            if (visualKorek != null) visualKorek.SetActive(true);
+        }
+
+        // JIKA SEDANG CUTSCENE, HANYA KUNCI KONTROL PERGERAKAN & KAMERA
         if (sedangCutscene)
         {
-            if (visualTangan != null) visualTangan.SetActive(false);
             return;
-        }
-        else
-        {
-            // Tangan HANYA menyala jika sedang bawa barang DAN sedang tidak cutscene
-            if (visualTangan != null && sedangBawaBarang) 
-            {
-                visualTangan.SetActive(true);
-            }
         }
 
         // --- TAMBAHAN BARU ---

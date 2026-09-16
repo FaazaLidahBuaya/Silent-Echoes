@@ -29,7 +29,7 @@ public class DoorController : MonoBehaviour
     [TextArea] public string teksBerhasil = "(Kunci berhasil digunakan)";
   
     private bool isMembukaAtauMenutup = false;
-    private bool isOpen = false;
+    public bool isOpen { get; private set; } = false;
 
     void Start()
     {

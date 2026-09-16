@@ -21,6 +21,7 @@ public class InventoryManager : MonoBehaviour
     public PlayerController scriptPlayer; 
 
     private Dictionary<string, GameObject> daftarItem = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> daftarTombolUI = new Dictionary<string, GameObject>();
     private GameObject barangSedangDilihat;
     private bool inventoryAktif = false;
 
@@ -82,7 +83,12 @@ public class InventoryManager : MonoBehaviour
             
             GameObject tombolBaru = Instantiate(prefabTombolItem, tempatLogoItem);
             
-            tombolBaru.GetComponent<Image>().sprite = logoItem;
+            Image img = tombolBaru.GetComponent<Image>();
+            if (img != null)
+            {
+                img.sprite = logoItem;
+                img.color = Color.white; // Pastikan warna tombol / logo selalu putih murni
+            }
             
             TextMeshProUGUI teksNama = tombolBaru.GetComponentInChildren<TextMeshProUGUI>();
             if (teksNama != null)
@@ -91,6 +97,28 @@ public class InventoryManager : MonoBehaviour
             }
             
             tombolBaru.GetComponent<Button>().onClick.AddListener(() => MunculkanViewer(itemAsli));
+            daftarTombolUI.Add(namaItem, tombolBaru);
+        }
+    }
+
+    public void HapusItem(string namaItem)
+    {
+        if (daftarItem.ContainsKey(namaItem))
+        {
+            if (daftarItem[namaItem] != null)
+            {
+                Destroy(daftarItem[namaItem]);
+            }
+            daftarItem.Remove(namaItem);
+        }
+
+        if (daftarTombolUI.ContainsKey(namaItem))
+        {
+            if (daftarTombolUI[namaItem] != null)
+            {
+                Destroy(daftarTombolUI[namaItem]);
+            }
+            daftarTombolUI.Remove(namaItem);
         }
     }
 

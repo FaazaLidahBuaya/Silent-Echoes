@@ -14,7 +14,7 @@ public class KorekMeja : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip sfxNyalaPerlahan;
 
-    private bool bisaDiambil = false;
+    public bool bisaDiambil { get; private set; } = false;
     private Vector3 ukuranAsliApi; 
     private float intensitasAsliCahaya; // BARU: Menyimpan intensitas cahaya aslimu
 
@@ -105,6 +105,12 @@ public class KorekMeja : MonoBehaviour
             scriptPlayer.sedangBawaBarang = true;
         }
         // ------------------------------------
+
+        // Update Petunjuk Quest
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Nyalakan saklar listrik", "Cari tuas listrik di dinding rumah");
+        }
 
         Destroy(gameObject);
     }

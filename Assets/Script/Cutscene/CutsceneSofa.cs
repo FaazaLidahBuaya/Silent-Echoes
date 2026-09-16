@@ -45,6 +45,9 @@ public class CutsceneSofa : MonoBehaviour
 
     private void Start()
     {
+        // Pastikan di awal permainan barang belum bisa diinteraksi
+        barangBisaDiinteraksi = false;
+
         // Pastikan di awal permainan menggunakan Skybox Sore
         if (skyboxSore != null)
         {
@@ -202,6 +205,12 @@ public class CutsceneSofa : MonoBehaviour
         if (korekDiMeja != null)
         {
             korekDiMeja.NyalakanPerlahan();
+        }
+
+        // 10. UPDATE QUEST PETUNJUK
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Ambil korek api di meja", "Gunakan sebagai sumber penerangan");
         }
     }
 

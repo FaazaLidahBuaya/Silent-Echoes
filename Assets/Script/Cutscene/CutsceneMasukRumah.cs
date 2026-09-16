@@ -112,6 +112,12 @@ public class CutsceneMasukRumah : MonoBehaviour
             scriptPlayer.controller.enabled = true;
             scriptPlayer.sedangCutscene = false;
         }
+
+        // 7. UPDATE QUEST PETUNJUK
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.SetQuest("Tunggu kakek di ruang tamu", "Duduklah di sofa ruang tamu");
+        }
     }
 
     IEnumerator LookAtTargetSmoothly(Transform target, float durasi)
