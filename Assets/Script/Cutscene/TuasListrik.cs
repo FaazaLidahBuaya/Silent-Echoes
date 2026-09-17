@@ -41,6 +41,34 @@ public class TuasListrik : MonoBehaviour
     public GameObject objekCoverSaklar;
     public GameObject objekFuseDalamSaklar;
 
+    void Awake()
+    {
+        // Jika sedang respawn setelah Game Over di telepon, saklar sudah pernah diperbaiki dan listrik menyala
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            SetKondisiListrikSudahMenyala();
+        }
+    }
+
+    /// <summary>
+    /// Mengatur tuas dan lampu gudang langsung dalam status menyala stabil (untuk checkpoint respawn)
+    /// </summary>
+    public void SetKondisiListrikSudahMenyala()
+    {
+        sudahDitarik = true;
+        sedangProses = false;
+        coverTerbuka = true;
+        fuseTerpasang = true;
+        sudahDiperbaiki = true;
+        listrikMenyalaStabil = true;
+
+        if (objekCoverSaklar != null) objekCoverSaklar.SetActive(false);
+        if (objekFuseDalamSaklar != null) objekFuseDalamSaklar.SetActive(true);
+
+        AturStatusLampu(true);
+        AturIntensitasLampu(2.5f);
+    }
+
     public void InteraksiTuas()
     {
         // Jika sedang animasi berjalan ATAU listrik sudah berhasil dinyalakan permanen, tolak interaksi!

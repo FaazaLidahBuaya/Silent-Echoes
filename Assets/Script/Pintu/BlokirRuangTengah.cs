@@ -16,6 +16,15 @@ public class BlokirRuangTengah : MonoBehaviour
 
     private bool sudahBerjalan = false; // Penanda agar hanya aktif 1 kali
 
+    void Awake()
+    {
+        // Jika sedang respawn di telepon, blokir ruang tengah sudah tidak aktif
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         // Cek apakah yang menyentuh adalah Player dan cutscene belum pernah aktif

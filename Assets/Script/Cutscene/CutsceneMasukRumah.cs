@@ -33,6 +33,16 @@ public class CutsceneMasukRumah : MonoBehaviour
 
     private bool cutsceneSelesai = false;
 
+    void Awake()
+    {
+        // Jika sedang respawn di telepon, cutscene masuk rumah sudah selesai
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            cutsceneSelesai = true;
+            gameObject.SetActive(false);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !cutsceneSelesai)

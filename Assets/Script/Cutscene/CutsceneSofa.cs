@@ -40,11 +40,26 @@ public class CutsceneSofa : MonoBehaviour
     // VARIABEL GLOBAL UNTUK SISTEM INTERAKSI BARANG
     public static bool barangBisaDiinteraksi = false;
 
-    private bool sudahTerpicu = false;
+    public bool sudahTerpicu { get; private set; } = false;
     private Vector3 posisiAwalPlayer; // Menyimpan posisi awal pemain
+
+    private void Awake()
+    {
+        // Jika sedang respawn setelah Game Over di telepon, langsung terapkan kondisi malam sejak frame pertama
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            TerapkanKondisiMalamInstan();
+        }
+    }
 
     private void Start()
     {
+        // Jika sedang respawn di telepon, jangan kembalikan ke sore!
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            return;
+        }
+
         // Pastikan di awal permainan barang belum bisa diinteraksi
         barangBisaDiinteraksi = false;
 
@@ -61,6 +76,90 @@ public class CutsceneSofa : MonoBehaviour
             {
                 cam.clearFlags = CameraClearFlags.Skybox;
             }
+        }
+    }
+
+    /// <summary>
+    /// Menerapkan kondisi malam, pencahayaan, pintu, dan menonaktifkan sofa secara instan tanpa cutscene
+    /// Digunakan saat respawn checkpoint di depan telepon
+    /// </summary>
+    public void TerapkanKondisiMalamInstan()
+    {
+        sudahTerpicu = true;
+
+        // Nonaktifkan collider sofa agar tidak bisa diinteraksi sama sekali oleh raycast
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        // 1. Pengaturan visual malam & kamera
+        if (playerCamera != null)
+        {
+            Camera cam = playerCamera.GetComponent<Camera>();
+            if (cam != null)
+            {
+                cam.clearFlags = (skyboxMalam != null) ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
+                cam.backgroundColor = backgroundMalam;
+                cam.farClipPlane = jarakRenderMalam;
+            }
+        }
+
+        if (skyboxMalam != null)
+        {
+            RenderSettings.skybox = skyboxMalam;
+        }
+        else
+        {
+            RenderSettings.skybox = null;
+        }
+
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.ambientLight = backgroundMalam;
+        RenderSettings.ambientIntensity = intensitasCahayaMalam;
+        RenderSettings.reflectionIntensity = 0.1f;
+
+        RenderSettings.fog = true;
+        RenderSettings.fogColor = warnaFog;
+        RenderSettings.fogDensity = ketebalanFog;
+
+        DynamicGI.UpdateEnvironment();
+
+        // 2. Matikan matahari & daftar lampu rumah
+        if (matahari != null) matahari.enabled = false;
+
+        if (daftarLampuRumah != null)
+        {
+            foreach (Light lampu in daftarLampuRumah)
+            {
+                if (lampu != null) lampu.enabled = false;
+            }
+        }
+
+        // 3. Hancurkan invisible wall & trigger blocker
+        if (invisibleWall != null) Destroy(invisibleWall);
+        if (triggerBlokirTengah != null) Destroy(triggerBlokirTengah);
+
+        // 4. Kunci pintu utama & buka pintu ruangan lain
+        if (pintuUtama != null && pintuUtama.engselPintu != null)
+        {
+            pintuUtama.engselPintu.localRotation = Quaternion.Euler(0, 0, 0);
+            pintuUtama.isTerkunci = true;
+        }
+
+        if (pintuYangAkanTerbuka != null)
+        {
+            foreach (DoorController pintu in pintuYangAkanTerbuka)
+            {
+                if (pintu != null) pintu.isTerkunci = false;
+            }
+        }
+
+        // 5. Izinkan interaksi barang
+        barangBisaDiinteraksi = true;
+
+        // 6. Matikan/hancurkan korek di meja karena sudah dipegang player
+        if (korekDiMeja != null)
+        {
+            korekDiMeja.gameObject.SetActive(false);
         }
     }
 
@@ -211,6 +310,16 @@ public class CutsceneSofa : MonoBehaviour
         if (QuestManager.Instance != null)
         {
             QuestManager.Instance.SetQuest("Ambil korek api di meja", "Gunakan sebagai sumber penerangan");
+        }
+
+        // 11. AUTOSAVE SAAT PLAYER BANGUN
+        if (GameCheckpointManager.Instance != null)
+        {
+            GameCheckpointManager.Instance.TriggerAutosave();
+        }
+        else if (AutosaveUI.Instance != null)
+        {
+            AutosaveUI.Instance.TriggerAutosave();
         }
     }
 

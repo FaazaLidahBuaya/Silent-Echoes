@@ -17,6 +17,7 @@ public class PlayerInteract : MonoBehaviour
     public TMPro.TextMeshProUGUI teksInteraksi; // Hubungkan TextMeshPro UI di Inspector (misal: "Ambil Obeng [E]")
 
     private GameObject objekDituju = null; 
+    private ToiletValve katupSedangDipegang = null;
 
     void Update()
     {
@@ -25,10 +26,35 @@ public class PlayerInteract : MonoBehaviour
         // 1. Selalu jalankan deteksi objek setiap frame
         DeteksiObjek();
 
-        // 2. Jika tombol E ditekan, jalankan interaksi
+        // 2. Interaksi tekan sekali (wasPressedThisFrame)
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             CobaInteraksi();
+        }
+
+        // 3. Interaksi TAHAN tombol E (isPressed) khusus katup toilet
+        if (Keyboard.current.eKey.isPressed)
+        {
+            if (objekDituju != null)
+            {
+                ToiletValve katup = objekDituju.GetComponent<ToiletValve>();
+                if (katup == null) katup = objekDituju.GetComponentInParent<ToiletValve>();
+                if (katup == null) katup = objekDituju.GetComponentInChildren<ToiletValve>();
+
+                if (katup != null && katup.sudahAdaGagang && !katup.isMaxTight)
+                {
+                    katupSedangDipegang = katup;
+                    katup.PutarKatup(Time.deltaTime);
+                }
+            }
+        }
+        else
+        {
+            if (katupSedangDipegang != null)
+            {
+                katupSedangDipegang.LepasPutar();
+                katupSedangDipegang = null;
+            }
         }
     }
 
@@ -46,16 +72,31 @@ public class PlayerInteract : MonoBehaviour
             TuasListrik tuas = hit.collider.GetComponent<TuasListrik>();
             ItemPickup item = hit.collider.GetComponent<ItemPickup>();
             TeleponRumah telepon = hit.collider.GetComponent<TeleponRumah>();
+            ToiletValve katup = hit.collider.GetComponent<ToiletValve>();
+            if (katup == null) katup = hit.collider.GetComponentInParent<ToiletValve>();
+            if (katup == null) katup = hit.collider.GetComponentInChildren<ToiletValve>();
+            DokumenPickup dokumen = hit.collider.GetComponent<DokumenPickup>();
 
-            // Jika belum bangun dari sofa (belum malam), item pickup dan korek meja belum bisa diambil & tidak memunculkan teks
-            if (!CutsceneSofa.barangBisaDiinteraksi)
+            // Sofa hanya bisa diinteraksi jika cutscene belum pernah terpicu
+            if (sofa != null && sofa.sudahTerpicu)
             {
-                item = null;
-                korek = null;
+                sofa = null;
             }
-            else if (korek != null && !korek.bisaDiambil)
+
+            // Katup toilet HANYA bisa diinteraksi jika quest Seloker sudah aktif!
+            if (katup != null)
             {
-                korek = null;
+                bool questJalan = (SelokerQuestManager.Instance != null && SelokerQuestManager.Instance.questAktif);
+                // Jika quest belum aktif sama sekali, katup belum bisa disentuh
+                if (!questJalan)
+                {
+                    katup = null;
+                }
+                // Jika ini katup 2 (butuh gagang), hanya bisa disentuh setelah toilet 2 mulai bocor!
+                else if (katup.butuhGagang && !katup.sudahAdaGagang && SelokerQuestManager.Instance != null && !SelokerQuestManager.Instance.toilet2BocorDimulai)
+                {
+                    katup = null;
+                }
             }
 
             // Telepon hanya bisa diinteraksi jika sedang berdering
@@ -64,7 +105,7 @@ public class PlayerInteract : MonoBehaviour
                 telepon = null;
             }
 
-            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null;
+            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null;
 
             if (bisaDiinteraksi)
             {
@@ -74,7 +115,30 @@ public class PlayerInteract : MonoBehaviour
                 // Tampilkan nama objek / aksi interaksi
                 if (teksInteraksi != null)
                 {
-                    if (item != null)
+                    if (katup != null)
+                    {
+                        if (!katup.sudahAdaGagang)
+                        {
+                            int persen = Mathf.RoundToInt(katup.tightness * 100f);
+                            // Cek apakah player punya item katup di inventory
+                            bool punyaGagang = InventoryManager.Instance != null && InventoryManager.Instance.CekItem("Gagang Katup");
+                            teksInteraksi.text = punyaGagang ? $"[E] Pasang Gagang Katup ({persen}%)" : $"(Gagang katup hilang! Sisa: {persen}%)";
+                        }
+                        else if (katup.isMaxTight)
+                        {
+                            teksInteraksi.text = "[Katup Tertutup Rapat]";
+                        }
+                        else
+                        {
+                            int persen = Mathf.RoundToInt(katup.tightness * 100f);
+                            teksInteraksi.text = $"[Tahan E] Putar Katup ({persen}%)";
+                        }
+                    }
+                    else if (dokumen != null)
+                    {
+                        teksInteraksi.text = $"[E] Periksa {dokumen.dataDokumen.judulDokumen}";
+                    }
+                    else if (item != null)
                     {
                         teksInteraksi.text = $"[E] Ambil {item.namaItem}";
                     }
@@ -149,12 +213,32 @@ public class PlayerInteract : MonoBehaviour
             teksInteraksi.text = "";
             teksInteraksi.gameObject.SetActive(false);
         }
+
+        if (katupSedangDipegang != null)
+        {
+            katupSedangDipegang.LepasPutar();
+            katupSedangDipegang = null;
+        }
     }
 
     void CobaInteraksi()
     {
         if (objekDituju != null)
         {
+            // Coba pasang gagang katup
+            ToiletValve katup = objekDituju.GetComponent<ToiletValve>();
+            if (katup == null) katup = objekDituju.GetComponentInParent<ToiletValve>();
+            if (katup == null) katup = objekDituju.GetComponentInChildren<ToiletValve>();
+            if (katup != null && !katup.sudahAdaGagang)
+            {
+                if (InventoryManager.Instance != null && InventoryManager.Instance.CekItem("Gagang Katup"))
+                {
+                    InventoryManager.Instance.HapusItem("Gagang Katup");
+                    katup.PasangGagang();
+                    return;
+                }
+            }
+
             // Coba buka pintu
             DoorController pintu = objekDituju.GetComponent<DoorController>();
             if (pintu != null) pintu.InteraksiPintu();
@@ -173,7 +257,11 @@ public class PlayerInteract : MonoBehaviour
             
             // Coba tarik tuas
             TuasListrik tuas = objekDituju.GetComponent<TuasListrik>();
-            if (tuas != null) tuas.InteraksiTuas(); // <--- TAMBAHAN UNTUK TUAS
+            if (tuas != null) tuas.InteraksiTuas();
+
+            // Coba ambil / periksa dokumen cerita
+            DokumenPickup dokumen = objekDituju.GetComponent<DokumenPickup>();
+            if (dokumen != null) dokumen.AmbilDokumen();
 
             // Coba ambil item biasa
             ItemPickup item = objekDituju.GetComponent<ItemPickup>();

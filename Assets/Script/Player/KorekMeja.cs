@@ -18,6 +18,15 @@ public class KorekMeja : MonoBehaviour
     private Vector3 ukuranAsliApi; 
     private float intensitasAsliCahaya; // BARU: Menyimpan intensitas cahaya aslimu
 
+    void Awake()
+    {
+        // Jika sedang respawn setelah Game Over di telepon, korek meja sudah diambil pemain
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
     void Start()
     {
         // Setup Api Sprite

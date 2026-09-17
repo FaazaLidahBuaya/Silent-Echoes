@@ -28,10 +28,22 @@ public class InventoryManager : MonoBehaviour
     [Header("Audio Inventory")]
     public AudioSource audioSource;
 
+    // Menyimpan daftar nama item yang sedang dimiliki player, tetap ada saat reload scene
+    public static HashSet<string> itemDimiliki = new HashSet<string>();
+
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    void Start()
+    {
+        // Jika sedang respawn dari checkpoint telepon, langsung restore item yang sebelumnya sudah diambil
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            RestoreSemuaItemTersimpan();
+        }
     }
 
     void Update()
@@ -68,15 +80,21 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void TambahItem(string namaItem, Sprite logoItem, GameObject itemAsli, AudioClip sfx)
+    public void TambahItem(string namaItem, Sprite logoItem, GameObject itemAsli, AudioClip sfx, bool putarAudio = true)
     {
         // 1. Putar suara jika ada
-        if (audioSource != null && sfx != null)
+        if (putarAudio && audioSource != null && sfx != null)
         {
             audioSource.PlayOneShot(sfx);
         }
 
-        // 2. Tambahkan ke daftar
+        // Catat ke daftar statis agar tidak hilang saat reload scene (checkpoint / game over)
+        if (!itemDimiliki.Contains(namaItem))
+        {
+            itemDimiliki.Add(namaItem);
+        }
+
+        // 2. Tambahkan ke daftar UI & viewer jika belum ada
         if (!daftarItem.ContainsKey(namaItem))
         {
             daftarItem.Add(namaItem, itemAsli);
@@ -103,6 +121,9 @@ public class InventoryManager : MonoBehaviour
 
     public void HapusItem(string namaItem)
     {
+        // Hapus dari daftar statis
+        itemDimiliki.Remove(namaItem);
+
         if (daftarItem.ContainsKey(namaItem))
         {
             if (daftarItem[namaItem] != null)
@@ -119,6 +140,36 @@ public class InventoryManager : MonoBehaviour
                 Destroy(daftarTombolUI[namaItem]);
             }
             daftarTombolUI.Remove(namaItem);
+        }
+    }
+
+    /// <summary>
+    /// Mengembalikan semua item yang dimiliki pemain sebelum game over ke dalam inventory
+    /// dan menyembunyikan model 3D item tersebut dari dunia game
+    /// </summary>
+    public void RestoreSemuaItemTersimpan()
+    {
+        if (itemDimiliki == null || itemDimiliki.Count == 0) return;
+
+        ItemPickup[] semuaItemDiScene = FindObjectsByType<ItemPickup>(FindObjectsInactive.Include);
+        foreach (ItemPickup item in semuaItemDiScene)
+        {
+            if (item != null && itemDimiliki.Contains(item.namaItem))
+            {
+                TambahItem(item.namaItem, item.logoUI, item.gameObject, null, false);
+                item.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Dipanggil saat kembali ke Main Menu atau mulai game baru dari nol
+    /// </summary>
+    public static void ResetInventoryStatic()
+    {
+        if (itemDimiliki != null)
+        {
+            itemDimiliki.Clear();
         }
     }
 

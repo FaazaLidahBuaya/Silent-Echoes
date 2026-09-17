@@ -104,6 +104,13 @@ public class TeleponRumah : MonoBehaviour
     public void AngkatTelepon()
     {
         if (!sedangBisaDiangkat || sudahSelesaiTelepon) return;
+
+        // Auto Save Checkpoint tepat saat mengangkat telepon
+        if (GameCheckpointManager.Instance != null)
+        {
+            GameCheckpointManager.Instance.SimpanCheckpointTelepon();
+        }
+
         StartCoroutine(ProsesCutsceneTelepon());
     }
 
@@ -246,8 +253,12 @@ public class TeleponRumah : MonoBehaviour
             SubtitleManager.Instance.TampilkanSubtitle("(Suara apa itu tadi di belakang...?! Aku harus mengeceknya!)", 3.5f);
         }
 
-        // 7. Update Quest
-        if (QuestManager.Instance != null)
+        // 7. Update Quest & Mulai Quest Luapan Toilet Seloker
+        if (SelokerQuestManager.Instance != null)
+        {
+            SelokerQuestManager.Instance.MulaiQuestToilet();
+        }
+        else if (QuestManager.Instance != null)
         {
             QuestManager.Instance.SetQuest("Periksa suara di belakang", "Selidiki benda yang terjatuh di lorong");
         }

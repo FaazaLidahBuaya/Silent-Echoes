@@ -25,6 +25,20 @@ public class GerbangDepan : MonoBehaviour
 
     private bool isCutscenePlaying = false;
 
+    void Awake()
+    {
+        // Jika sedang respawn di telepon, gerbang depan sudah pernah dibuka
+        if (GameCheckpointManager.respawnDiTelepon)
+        {
+            isCutscenePlaying = true;
+            if (engselGerbang != null)
+            {
+                engselGerbang.rotation = engselGerbang.rotation * Quaternion.Euler(sudutBukaGerbang);
+            }
+            gameObject.SetActive(false);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !isCutscenePlaying)
