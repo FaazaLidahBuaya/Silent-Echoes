@@ -8,7 +8,7 @@ public class ItemPickup : MonoBehaviour
     [Header("Audio")]
     public AudioClip sfxAmbil; // Suara unik untuk barang ini
 
-    public void AmbilItem()
+    public virtual void AmbilItem()
     {
         if (InventoryManager.Instance != null)
         {

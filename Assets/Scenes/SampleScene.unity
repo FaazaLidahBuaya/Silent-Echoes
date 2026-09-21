@@ -9991,11 +9991,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
   panelInventory: {fileID: 2059564995}
   tempatLogoItem: {fileID: 1056453648}
-  prefabTombolItem: {fileID: 636613563063221495, guid: 35ef94597b3db80498ac82c823319478, type: 3}
+  prefabTombolItem: {fileID: 6532924468881370185, guid: 783f27e10c65aca4fabd4ddb03199689, type: 3}
   panelViewer: {fileID: 1892473476}
   tempatSpawnBarang3D: {fileID: 1071221303}
   scriptPlayer: {fileID: 1954645311}
+  inventoryAktif: 0
+  frameTerakhirBuka: -1
   audioSource: {fileID: 94074114}
+  teksInventoryKosong: {fileID: 0}
+  fontInterMedium: {fileID: 11400000, guid: a1ecd06ead637e1458b292cffb1db2ae, type: 2}
 --- !u!82 &94074114
 AudioSource:
   m_ObjectHideFlags: 0
@@ -37795,6 +37799,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1a0c1bb03846df1498965a2cd32e272e, type: 3}
   m_PrefabInstance: {fileID: 1210178241}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &399495738
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1316543914}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.74073
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.74073
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.74073
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -15.552
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.961
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.545
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.67157334
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.67157334
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.22133513
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.22133507
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 36.482
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      propertyPath: m_Name
+      value: Kunci Perpus
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 645938902}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 645938901}
+  m_SourcePrefab: {fileID: 100100000, guid: c29ed0077978a1941beb36215968afbd, type: 3}
 --- !u!1001 &401093785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59695,6 +59774,52 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e335263694236a24db4a2d0ef713e939, type: 3}
   m_PrefabInstance: {fileID: 1997880058}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &645938900 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+  m_PrefabInstance: {fileID: 399495738}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &645938901
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645938900}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.24256274, y: 0.09368855, z: 0.004535364}
+  m_Center: {x: -0.017768512, y: -0.0000000010590859, z: 7.3643514e-10}
+--- !u!114 &645938902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645938900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f829d18c65a01364da7521c99805c727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  namaItem: Kunci Perpustakaan
+  logoUI: {fileID: 21300000, guid: 141e2a9e757ef5f44820f39b85786e90, type: 3}
+  sfxAmbil: {fileID: 8300000, guid: 365ccadc3f1698d4b85de6ea64e65e3d, type: 3}
+--- !u!4 &645938905 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c29ed0077978a1941beb36215968afbd, type: 3}
+  m_PrefabInstance: {fileID: 399495738}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &646351965 stripped
 Transform:
@@ -92856,8 +92981,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Batal
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a1ecd06ead637e1458b292cffb1db2ae, type: 2}
+  m_sharedMaterial: {fileID: 8118861562076417647, guid: a1ecd06ead637e1458b292cffb1db2ae, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -98138,10 +98263,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2059564996}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -50}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1200, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1056453649
 MonoBehaviour:
@@ -98152,21 +98277,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1056453647}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 140
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 150, y: 150}
-  m_Spacing: {x: 40, y: 40}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+    m_Left: 15
+    m_Right: 15
+    m_Top: 15
+    m_Bottom: 15
+  m_ChildAlignment: 1
+  m_Spacing: 8
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1001 &1056889482
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98590,6 +98717,462 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d7448b311152a1740acbc1e8079e0217, type: 3}
   m_PrefabInstance: {fileID: 1059585096}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1060922526
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.156717
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 15.846936
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.8731527
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 136.624
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.871
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 168.864
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_Name
+      value: Dairy1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1060922529}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1060922528}
+  m_SourcePrefab: {fileID: 100100000, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+--- !u!1 &1060922527 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+  m_PrefabInstance: {fileID: 1060922526}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1060922528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060922527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94abf451137b3c4db1d4bde9591d213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DokumenPickup
+  dataDokumen:
+    idDokumen: dokumen#1
+    judulDokumen: Kehidupan baru
+    iconUI: {fileID: 21300000, guid: ddeb50d58d888f14b8c13adb320c4014, type: 3}
+    prefabModel3D: {fileID: 1060922527}
+    daftarHalaman:
+    - fotoHalaman: {fileID: 21300000, guid: 299150e8f4935fa4486fc671de8d5566, type: 3}
+      teksPenjelasan: '3 Januari 2015
+
+
+        Hari ini aku akhirnya pergi dari
+        rumah.
+
+
+        Aku memutuskan untuk tinggal sendirian di pegunungan yang
+        cukup jauh dari desa. Tempatnya tenang sekali. Tidak banyak suara selain
+        angin, burung, dan sesekali suara binatang dari dalam hutan.
+
+
+        Aku
+        sudah memutuskan untuk membangun sebuah mansion di sini.
+
+
+        Rencananya
+        mansion ini akan cukup besar, dua lantai dengan tiga kamar tidur. Memang
+        agak berlebihan kalau dipikir-pikir, mengingat aku akan tinggal sendirian.
+
+
+        Tapi
+        tidak ada salahnya punya beberapa kamar tambahan.
+
+
+        Siapa tahu suatu
+        hari nanti ada saudara yang datang berkunjung.
+
+
+        Aku sudah membawa
+        blueprint bangunannya. Semoga semuanya berjalan sesuai rencana.'
+    - fotoHalaman: {fileID: 21300000, guid: 9b8bfd1ef9206044484d32c9b95ec04e, type: 3}
+      teksPenjelasan: '5 Januari 2015
+
+
+        Hari ini aku memanggil beberapa tukang
+        dari desa untuk mulai mengerjakan pembangunan.
+
+
+        Aku memberikan blueprint
+        yang sudah kubuat kepada mereka.
+
+
+        Mereka sempat keberatan ketika
+        tahu lokasi pembangunan ini cukup jauh dari desa terdekat. Aku tidak terlalu
+        menyalahkan mereka. Perjalanannya memang lumayan jauh, apalagi dengan membawa
+        bahan-bahan bangunan.
+
+
+        Akhirnya aku memberikan uang tambahan untuk
+        biaya transportasi.
+
+
+        Setelah semuanya disepakati, mereka mulai bekerja.
+
+
+        Mudah-mudahan
+        beberapa bulan lagi aku sudah bisa tinggal di sini.'
+    - fotoHalaman: {fileID: 21300000, guid: 2835528c7c29fab4da08b8f1642944d7, type: 3}
+      teksPenjelasan: '13 Maret 2015
+
+
+        Bangunan mulai terlihat bentuknya.
+
+
+        Struktur
+        utamanya sudah berdiri dan sekarang ada enam tiang penyangga yang terlihat
+        jelas.
+
+
+        Tapi hari ini aku mendapat laporan yang agak aneh dari para
+        kuli.
+
+
+        Beberapa bahan bangunan ternyata berkurang dari jumlah yang
+        seharusnya.
+
+
+        Aku langsung berpikir mungkin ada hewan liar yang mengambilnya.
+
+
+        Maklum,
+        lokasi ini memang dekat sekali dengan hutan.
+
+
+        Aku memutuskan untuk
+        memasang beberapa perangkap di sekitar lokasi pembangunan. Aku juga memberikan
+        dana tambahan kepada tukang untuk membeli bahan yang hilang.
+
+
+        Mudah-mudahan
+        setelah ini tidak ada lagi yang berkurang.'
+    - fotoHalaman: {fileID: 21300000, guid: de83e48b050b3b14798fbfee9d6f333f, type: 3}
+      teksPenjelasan: '### 14 Maret 2015
+
+
+
+        Aku datang ke lokasi pembangunan
+        malam ini. Aku ingin mengecek perangkap yang kemarin kupasang. Hanya bermodalkan
+        senter yang mungkin bisa menerangi sekitar lima meter ke depan dan sebuah
+        parang untuk berjaga-jaga kalau ada hewan buas.
+
+
+
+        Suasananya cukup
+        gelap. Terlalu gelap, mungkin.
+
+
+
+        Aku menemukan semua perangkap sudah
+        bekerja, tapi tidak ada satu pun yang terisi. Aneh. Entah hewan macam apa
+        yang bisa menghindari semua perangkap itu. Aku akhirnya menyerah dan memutuskan
+        untuk pulang.
+
+
+
+        Sebelum pergi, aku sempat melihat kembali fondasi
+        mansion dari kejauhan. Entah kenapa... aku merasa ada sesuatu yang berbeda.
+
+
+
+        Aku
+        menghitung tiang penyangga yang terlihat dalam gelap.
+
+
+
+        Satu...
+        Dua... Tiga...
+
+
+
+        ...
+
+
+
+        Tujuh?
+
+
+
+        Bukankah seharusnya
+        hanya ada enam?
+
+
+
+        Aku berdiri cukup lama sambil mencoba melihat
+        lebih jelas, tapi cahaya senterku tidak cukup jauh. Mungkin aku salah lihat.
+        Atau mungkin para kuli memang menambahkan satu tiang agar bangunannya lebih
+        kokoh. Lagipula, aku tidak terlalu paham soal konstruksi.
+
+
+
+        Aku
+        pun pulang.
+
+'
+    - fotoHalaman: {fileID: 21300000, guid: e2338c62900f06a46894c15565654edd, type: 3}
+      teksPenjelasan: '7 April 2015
+
+
+        Dinding mansion mulai terlihat sekarang.
+
+
+        Kalau
+        dilihat dari jauh, bentuknya sudah seperti rumah sungguhan.
+
+
+        Aku
+        tadi bertanya kepada para kuli kira-kira berapa lama lagi sampai bangunan
+        ini selesai.
+
+
+        Mereka bilang sekitar empat sampai lima bulan lagi.
+
+
+        Tidak
+        terlalu lama.
+
+
+        Aku kemudian menanyakan sesuatu yang tiba-tiba teringat
+        olehku.
+
+
+        Aku bertanya apakah mansion ini memang memiliki tujuh tiang
+        penyangga.
+
+
+        Mereka langsung bilang tidak.
+
+
+        Enam.
+
+
+        Hanya
+        enam, sesuai dengan blueprint.
+
+
+        Aku agak bingung.
+
+
+        Bukankah
+        bulan lalu aku melihat tujuh?
+
+
+        Mungkin aku salah menghitung.
+
+
+        Atau
+        mungkin mereka memang sempat menambahkan satu tiang lalu membongkarnya lagi.
+
+
+        Ya...
+
+
+        Mungkin
+        itu.'
+    - fotoHalaman: {fileID: 21300000, guid: 8447340d9731cb844b1fa1f7788cb693, type: 3}
+      teksPenjelasan: '28 Juni 2015
+
+
+        Mansion sudah hampir selesai.
+
+
+        Setidaknya
+        begitulah kelihatannya.
+
+
+        Aku baru sadar satu hal yang cukup bodoh.
+
+
+        Aku
+        belum membeli furniture sama sekali.
+
+
+        Jadi hari ini aku mulai membeli
+        beberapa perabot untuk mengisi rumah.
+
+
+        Aku juga berkeliling melihat-lihat
+        setiap ruangan yang masih kosong.
+
+
+        Rasanya aneh melihat rumah sebesar
+        ini tanpa ada apa-apa di dalamnya.
+
+
+        Para kuli juga sempat bercerita
+        kepadaku.
+
+
+        Mereka bilang beberapa dari mereka sering merasa seperti
+        sedang diawasi ketika bekerja.
+
+
+        Tidak ada yang benar-benar melihat
+        apa pun.
+
+
+        Hanya perasaan saja.
+
+
+        Aku tidak terlalu memikirkannya.
+
+
+        Mungkin
+        karena tempat ini memang sepi.
+
+
+        Hutan di sekitar sini cukup luas
+        dan suara-suara dari dalamnya kadang terdengar seperti berasal dari dekat.
+
+
+        Aku
+        bilang kepada mereka untuk tidak terlalu memikirkannya.
+
+
+        Toh, sebentar
+        lagi pekerjaan mereka selesai.'
+    - fotoHalaman: {fileID: 21300000, guid: 5b4083486165ba84cbe71b6c31705114, type: 3}
+      teksPenjelasan: '12 Agustus 2015
+
+
+        Akhirnya.
+
+
+        Rumah ini benar-benar
+        siap dihuni.
+
+
+        Tidak sia-sia aku tinggal di kos-kosan selama berbulan-bulan.
+
+
+        Hari
+        ini aku membawa semua barangku ke sini dan mulai tinggal di mansion ini.
+
+
+        Rasanya...
+
+
+        Tenang
+        sekali.
+
+
+        Jauh dari suara kendaraan, orang-orang, dan keramaian desa.
+
+
+        Aku
+        bisa membuka jendela pagi-pagi dan hanya mendengar suara angin melewati pepohonan.
+
+
+        Untuk
+        makanan, aku sudah menyiapkan kebun kecil di belakang rumah.
+
+
+        Jadi
+        sepertinya aku tidak perlu terlalu sering pergi ke desa.
+
+
+        Aku akhirnya
+        mendapatkan tempat yang selama ini kuinginkan.
+
+
+        Rumah yang jauh
+        dari mana-mana.
+
+        Sendirian.
+
+        Tenang.
+
+        Sangat tenang...
+
+        ...
+
+        Mungkin
+        terlalu tenang.'
+  langsungBukaSaatDiambil: 1
+  sfxAmbilDokumen: {fileID: 8300000, guid: 2ae9d06b247025c43a7ae052464df86c, type: 3}
+--- !u!65 &1060922529
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060922527}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02, y: 0.023755608, z: 0.023151772}
+  m_Center: {x: 0, y: 0.0003092667, z: 0}
 --- !u!4 &1060974540 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8728f01fb0391974583fcd638f803b22, type: 3}
@@ -123563,6 +124146,7 @@ Transform:
   - {fileID: 228326328}
   - {fileID: 692531060}
   - {fileID: 1171408674}
+  - {fileID: 645938905}
   - {fileID: 220089263}
   - {fileID: 1223173899}
   - {fileID: 1093323708}
@@ -132185,6 +132769,198 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1924904939}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1408262977
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.156717
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 15.846936
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.8731527
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 142.314
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.7162
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 168.694
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_Name
+      value: Dairy2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1408262980}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1408262979}
+  m_SourcePrefab: {fileID: 100100000, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+--- !u!1 &1408262978 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+  m_PrefabInstance: {fileID: 1408262977}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1408262979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408262978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94abf451137b3c4db1d4bde9591d213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DokumenPickup
+  dataDokumen:
+    idDokumen: dokumen#2
+    judulDokumen: Obat pereda halusinasi
+    iconUI: {fileID: 21300000, guid: ddeb50d58d888f14b8c13adb320c4014, type: 3}
+    prefabModel3D: {fileID: 1408262978}
+    daftarHalaman:
+    - fotoHalaman: {fileID: 21300000, guid: c297a231204cbb245b5fc01a14c39c7f, type: 3}
+      teksPenjelasan: '18 September 2015
+
+
+
+        Hari ini salah satu teman baikku
+        datang berkunjung. Dia terlihat cukup heran melihat tempat tinggalku sekarang.
+        Dia bahkan bertanya kenapa aku memilih mengasingkan diri sejauh ini, jauh
+        di pegunungan dan hutan. Aku hanya menjawab bahwa aku ingin hidup tenang
+        dan santai. Tidak ada yang terlalu istimewa, aku hanya ingin menikmati hidup
+        tanpa harus terus memikirkan pekerjaan dan masalah lainnya. Dia bilang aku
+        seharusnya sesekali pergi keluar, mengunjungi kota, bertemu orang lain, dan
+        jangan terus-terusan tinggal sendirian di tempat seperti ini. Aku hanya mengiyakan.
+        Mungkin dia benar. Tapi entah kenapa aku merasa tidak membutuhkan semua itu.
+        Di sini sudah cukup.'
+    - fotoHalaman: {fileID: 21300000, guid: 1156f140992265e43b2e40330e36459a, type: 3}
+      teksPenjelasan: '13 Oktober 2015
+
+
+
+        Aku mulai hafal dengan semua suara
+        yang ada di sini. Suara angin, pepohonan, dan air sungai di kejauhan. Bahkan
+        suara lantai kayu yang berderit ketika aku berjalan. Semuanya sudah terasa
+        biasa. Tapi hari ini aku baru menyadari sesuatu. Kenapa tidak ada hewan di
+        sini? Aku hampir tidak pernah melihat satu pun hewan liar. Tidak ada rusa,
+        monyet, atau suara binatang dari dalam hutan. Burung memang terkadang masih
+        terdengar berkicau, tapi aku tidak pernah melihatnya. Aku jadi teringat saat
+        mansion ini masih dibangun. Bahan bangunan yang tiba-tiba hilang. Waktu itu
+        aku mengira ada hewan liar yang mengambilnya. Tapi kalau memang tidak ada
+        hewan liar di sekitar sini... lalu siapa yang mengambilnya? Dan ada satu
+        hal lagi yang membuatku bingung. Perangkap yang kupasang waktu itu semuanya
+        bekerja. Aku masih ingat suara mekanismenya ketika aktif, tapi tidak ada
+        satu pun yang tertangkap. Kalau tidak ada apa-apa di sana, lalu apa yang
+        membuat perangkap itu bekerja?'
+    - fotoHalaman: {fileID: 21300000, guid: c81c69ffeed86684ca13725ea6f4165f, type: 3}
+      teksPenjelasan: '17 Oktober 2015
+
+
+
+        Beberapa hari terakhir aku mulai
+        mendengar sesuatu setiap malam. Langkah kaki. Pelan, seperti seseorang sedang
+        berjalan di sekitar rumah. Kadang terdengar dari lantai bawah, kadang dari
+        lorong, bahkan pernah terdengar seperti berasal dari tangga. Aku sudah beberapa
+        kali memeriksanya, tapi tidak ada siapa-siapa. Tidak ada pintu yang terbuka,
+        tidak ada jendela yang pecah, tidak ada apa pun. Mungkin aku hanya berhalusinasi
+        karena kurang tidur. Aneh juga, aku tidak bekerja dan tidak melakukan banyak
+        hal, tapi rasanya tubuhku selalu lelah. Mungkin aku memang terlalu lama sendirian.'
+    - fotoHalaman: {fileID: 21300000, guid: b6a780eefeabb694497fe0a525d6d7ec, type: 3}
+      teksPenjelasan: '23 Oktober 2015
+
+
+
+        Aku menemukan sesuatu yang mungkin
+        bisa membantu. Semacam obat untuk meredakan halusinasi. Beberapa hari terakhir
+        keadaanku semakin buruk. Aku mulai melihat bayangan, kadang hanya sekilas
+        di ujung lorong, kadang berdiri di depan pintu. Pernah juga aku melihat beberapa
+        bayangan berdiri di dalam rumah. Diam. Tidak bergerak. Hanya berdiri. Aku
+        tidak tahu apakah itu benar-benar ada atau hanya pikiranku sendiri. Untungnya
+        aku menemukan cara untuk meredakannya. Aku membuat obat ini dari beberapa
+        tanaman yang tumbuh di sekitar rumah dan menyimpannya dalam bentuk jamu.
+        Rasanya tidak terlalu enak, tapi setiap kali meminumnya, semuanya kembali
+        normal. Bayangan-bayangan itu menghilang dan suara langkah kaki menjadi lebih
+        jarang. Karena itu aku membuat beberapa lagi dan meletakkannya di beberapa
+        tempat di seluruh rumah. Dapur, kamar, ruang tamu, dan dekat tangga. Aku
+        tidak mau harus mencarinya ketika keadaan mulai memburuk. Sekarang aku hanya
+        perlu meminumnya ketika halusinasi mulai muncul. Dan berhasil. Setidaknya...
+        halusinasinya berhasil diatasi. Tapi ada satu hal yang tidak berubah. Perasaan
+        seperti sedang diawasi. Entah dari mana. Setiap kali aku berada sendirian
+        di sebuah ruangan, aku selalu merasa seperti ada seseorang yang memperhatikanku.
+        Aku sudah mencoba mengabaikannya. Tapi semakin aku mencoba tidak memikirkannya...
+        semakin kuat rasanya.'
+  langsungBukaSaatDiambil: 1
+  sfxAmbilDokumen: {fileID: 8300000, guid: 2ae9d06b247025c43a7ae052464df86c, type: 3}
+--- !u!65 &1408262980
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408262978}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02, y: 0.023755608, z: 0.023151772}
+  m_Center: {x: 0, y: 0.0003092667, z: 0}
 --- !u!1001 &1408562754
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -142454,6 +143230,139 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.6620579, y: 3.797869, z: 0.623177}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &1510028655
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.156717
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 15.846936
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.8731527
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 149.679
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.0091
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 162.913
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      propertyPath: m_Name
+      value: Dairy3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1510028658}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1510028657}
+  m_SourcePrefab: {fileID: 100100000, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+--- !u!1 &1510028656 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 74996e7118e5cf340b5fd44ac32bc8ad, type: 3}
+  m_PrefabInstance: {fileID: 1510028655}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1510028657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510028656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94abf451137b3c4db1d4bde9591d213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DokumenPickup
+  dataDokumen:
+    idDokumen: dokumen#3
+    judulDokumen: Sumber Listrik
+    iconUI: {fileID: 21300000, guid: ddeb50d58d888f14b8c13adb320c4014, type: 3}
+    prefabModel3D: {fileID: 1510028656}
+    daftarHalaman:
+    - fotoHalaman: {fileID: 21300000, guid: 48755daf6cbbbf947aa12cca4b36fc08, type: 3}
+      teksPenjelasan: '10 November 2015
+
+        Aku membangun sistem listrik rumah
+        ini hanya dengan satu saklar utama. Jadi, sekali kutarik, semua lampu di
+        rumah akan menyala. Sumber listriknya berasal dari pembangkit listrik tenaga
+        arus air sungai yang kuletakkan di ujung sungai.
+
+        Tapi terkadang
+        saklar ini mati dan menyala sendiri, seperti ada yang menariknya. Ah, mungkin
+        wajar karena aku membuat saklar ini sendiri. Mungkin memang belum sempurna
+        saja.'
+  langsungBukaSaatDiambil: 1
+  sfxAmbilDokumen: {fileID: 8300000, guid: 2ae9d06b247025c43a7ae052464df86c, type: 3}
+--- !u!65 &1510028658
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510028656}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02, y: 0.023755608, z: 0.023151772}
+  m_Center: {x: 0, y: 0.0003092667, z: 0}
 --- !u!1 &1510279228 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2289531515582960702, guid: 198477d4e339b464981b3aa15056fed0, type: 3}
@@ -153327,9 +154236,12 @@ MonoBehaviour:
   teksNomorHalaman: {fileID: 343905899}
   teksJudul: {fileID: 711978833}
   teksPenjelasan: {fileID: 1341448450}
+  fontInterMedium: {fileID: 11400000, guid: a1ecd06ead637e1458b292cffb1db2ae, type: 2}
   audioSource: {fileID: 1646034922}
   sfxBukaBuku: {fileID: 8300000, guid: 2ae9d06b247025c43a7ae052464df86c, type: 3}
   sfxBalikHalaman: {fileID: 8300000, guid: 164bff35bdccd1844b31beeaabda76d4, type: 3}
+  sedangBukaDokumen: 0
+  frameTerakhirBuka: -1
 --- !u!4 &1646034921
 Transform:
   m_ObjectHideFlags: 0
@@ -161289,6 +162201,14 @@ MonoBehaviour:
   durasiMaintenance: 180
   kecepatanMelonggarMaintenance: 0.02
   delayMelonggarMaintenance: 8
+  delaySuaraDapur: 6
+  titikSuaraDapur: {fileID: 645938905}
+  sfxSuaraDapur: {fileID: 8300000, guid: 365ccadc3f1698d4b85de6ea64e65e3d, type: 3}
+  objekKunciDapur: {fileID: 645938900}
+  subtitleDapur: (Suara apa itu dari arah dapur...?)
+  judulQuestDapur: Periksa Suara di Dapur
+  deskripsiQuestDapur: Ada suara aneh terdengar dari arah dapur. Cari tahu apa yang
+    terjadi.
 --- !u!4 &1739106603
 Transform:
   m_ObjectHideFlags: 0
@@ -180082,7 +181002,7 @@ Transform:
   m_GameObject: {fileID: 1954645310}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.99979347, z: -0, w: -0.020323848}
-  m_LocalPosition: {x: 136.93, y: 11.926, z: 169.92}
+  m_LocalPosition: {x: 162.82, y: 1.76, z: 281.47}
   m_LocalScale: {x: 0.6, y: 0.8, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -190772,7 +191692,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2059564995}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
@@ -190802,7 +191722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.47058824}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.39215687}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -198923,4 +199843,7 @@ SceneRoots:
   - {fileID: 74465974}
   - {fileID: 1924904939}
   - {fileID: 1962189190}
+  - {fileID: 1060922526}
+  - {fileID: 1408262977}
+  - {fileID: 1510028655}
   - {fileID: 1646034921}

@@ -76,6 +76,7 @@ public class PlayerInteract : MonoBehaviour
             if (katup == null) katup = hit.collider.GetComponentInParent<ToiletValve>();
             if (katup == null) katup = hit.collider.GetComponentInChildren<ToiletValve>();
             DokumenPickup dokumen = hit.collider.GetComponent<DokumenPickup>();
+            TriggerTekaTeki tekaTeki = hit.collider.GetComponent<TriggerTekaTeki>();
 
             // Sofa hanya bisa diinteraksi jika cutscene belum pernah terpicu
             if (sofa != null && sofa.sudahTerpicu)
@@ -105,7 +106,7 @@ public class PlayerInteract : MonoBehaviour
                 telepon = null;
             }
 
-            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null;
+            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null || tekaTeki != null;
 
             if (bisaDiinteraksi)
             {
@@ -189,6 +190,10 @@ public class PlayerInteract : MonoBehaviour
                     {
                         teksInteraksi.text = "[E] Angkat Telepon";
                     }
+                    else if (tekaTeki != null && !tekaTeki.sudahSelesai)
+                    {
+                        teksInteraksi.text = $"[E] {tekaTeki.promptInteraksi}";
+                    }
                     teksInteraksi.gameObject.SetActive(true);
                 }
             }
@@ -270,6 +275,10 @@ public class PlayerInteract : MonoBehaviour
             // Coba angkat telepon
             TeleponRumah telepon = objekDituju.GetComponent<TeleponRumah>();
             if (telepon != null) telepon.AngkatTelepon();
+
+            // Coba interaksi teka-teki
+            TriggerTekaTeki tekaTeki = objekDituju.GetComponent<TriggerTekaTeki>();
+            if (tekaTeki != null) tekaTeki.InteraksiPlayer();
         }
     }
 }

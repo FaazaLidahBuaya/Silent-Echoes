@@ -56,6 +56,22 @@ public class SelokerQuestManager : MonoBehaviour
     private bool faseMaintenance = false;
     private float timerMaintenance = 0f;
 
+    [Header("Event Lanjutan: Suara & Kunci Dapur")]
+    [Tooltip("Waktu tunggu setelah Seloker kalah sebelum suara di dapur terdengar")]
+    public float delaySuaraDapur = 4.5f;
+    [Tooltip("Titik lokasi suara benda jatuh di dapur (3D audio)")]
+    public Transform titikSuaraDapur;
+    [Tooltip("Efek suara benda jatuh / gaduh di dapur")]
+    public AudioClip sfxSuaraDapur;
+    [Tooltip("Objek Kunci di dapur yang akan dimunculkan")]
+    public GameObject objekKunciDapur;
+    [Tooltip("Subtitle yang muncul saat mendengar suara dapur")]
+    public string subtitleDapur = "(Suara apa itu dari arah dapur...?)";
+    [Tooltip("Judul quest untuk memeriksa dapur")]
+    public string judulQuestDapur = "Periksa Suara di Dapur";
+    [Tooltip("Deskripsi quest untuk memeriksa dapur")]
+    public string deskripsiQuestDapur = "Ada suara aneh terdengar dari arah dapur. Cari tahu apa yang terjadi.";
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -81,6 +97,12 @@ public class SelokerQuestManager : MonoBehaviour
         if (tombolRetry != null)
         {
             tombolRetry.onClick.AddListener(OnKlikTombolRetry);
+        }
+
+        // Kunci di dapur disembunyikan terlebih dahulu di awal game
+        if (objekKunciDapur != null)
+        {
+            objekKunciDapur.SetActive(false);
         }
 
         // Listener saat katup 1 berhasil ditutup pertama kali
@@ -144,12 +166,20 @@ public class SelokerQuestManager : MonoBehaviour
     void Update()
     {
         // =========================================================================
-        // TOMBOL CEPAT DEBUG TEST: Tekan huruf 'K' di keyboard saat Play Mode
+        // TOMBOL CEPAT DEBUG TEST (Play Mode):
+        // - Huruf 'K' : Uji Coba Jumpscare Instan
+        // - Huruf 'L' : Selesaikan Event Seloker Seketika (Instant Win)
         // =========================================================================
-        if (UnityEngine.InputSystem.Keyboard.current != null && 
-            UnityEngine.InputSystem.Keyboard.current.kKey.wasPressedThisFrame)
+        if (UnityEngine.InputSystem.Keyboard.current != null)
         {
-            TestJumpscareInstan();
+            if (UnityEngine.InputSystem.Keyboard.current.kKey.wasPressedThisFrame)
+            {
+                TestJumpscareInstan();
+            }
+            if (UnityEngine.InputSystem.Keyboard.current.lKey.wasPressedThisFrame)
+            {
+                SelesaikanQuestInstan();
+            }
         }
 
         if (!questAktif || questSelesai || sedangProsesGameOver) return;
@@ -199,8 +229,6 @@ public class SelokerQuestManager : MonoBehaviour
         }
     }
 
-
-
     [ContextMenu("TEST JUMPSCARE SEKARANG")]
     public void TestJumpscareInstan()
     {
@@ -209,6 +237,14 @@ public class SelokerQuestManager : MonoBehaviour
             Debug.Log("<color=red>[DEBUG]</color> Memicu Test Jumpscare Seloker!");
             StartCoroutine(ProsesGameOverFNAF(1));
         }
+    }
+
+    [ContextMenu("SELESAIKAN EVENT SELOKER SEKARANG (INSTANT WIN)")]
+    public void SelesaikanQuestInstan()
+    {
+        Debug.Log("<color=green>[DEBUG/CHEAT]</color> Memaksa Event Seloker Selesai Seketika!");
+        questAktif = true;
+        SelesaikanQuest();
     }
 
     void OnKatup1DitutupPertamaKali()
@@ -341,6 +377,58 @@ public class SelokerQuestManager : MonoBehaviour
         {
             QuestManager.Instance.SetQuest("Selamat", "Kedua toilet sudah berhasil dikendalikan");
         }
+
+        // Picu Autosave lengkap dengan animasi logo di pojok layar
+        if (GameCheckpointManager.Instance != null)
+        {
+            GameCheckpointManager.Instance.TriggerAutosave();
+        }
+        else if (AutosaveUI.Instance != null)
+        {
+            AutosaveUI.Instance.TriggerAutosave();
+        }
+
+        // Jalankan event lanjutan: Suara mencurigakan dari arah dapur & kemunculan kunci
+        StartCoroutine(ProsesEventDapurSetelahMenang());
+    }
+
+    private IEnumerator ProsesEventDapurSetelahMenang()
+    {
+        // Tunggu beberapa detik setelah rasa aman menang melawan Seloker
+        yield return new WaitForSeconds(delaySuaraDapur);
+
+        // 1. Putar suara mencurigakan (benda jatuh/gaduh) dari arah dapur (3D audio)
+        if (sfxSuaraDapur != null)
+        {
+            Vector3 posDapur = (titikSuaraDapur != null) ? titikSuaraDapur.position : transform.position;
+            AudioSource.PlayClipAtPoint(sfxSuaraDapur, posDapur);
+        }
+
+        // 2. Tampilkan subtitle player
+        if (SubtitleManager.Instance != null && !string.IsNullOrEmpty(subtitleDapur))
+        {
+            SubtitleManager.Instance.TampilkanSubtitle(subtitleDapur, 4f);
+        }
+
+        // 3. Munculkan kunci di dapur yang sebelumnya tidak ada di sana
+        if (objekKunciDapur != null)
+        {
+            objekKunciDapur.SetActive(true);
+            Debug.Log("<color=cyan>[SelokerQuestManager]</color> Kunci di dapur berhasil dimunculkan!");
+        }
+
+        // 4. Update quest pemain agar memeriksa ke dapur
+        if (QuestManager.Instance != null && !string.IsNullOrEmpty(judulQuestDapur))
+        {
+            QuestManager.Instance.SetQuest(judulQuestDapur, deskripsiQuestDapur);
+        }
+    }
+
+    [ContextMenu("TEST EVENT DAPUR SEKARANG")]
+    public void TestEventDapurInstan()
+    {
+        Debug.Log("<color=yellow>[DEBUG]</color> Memicu Test Event Suara Dapur & Kemunculan Kunci!");
+        StartCoroutine(ProsesEventDapurSetelahMenang());
     }
 
     // =========================================================================

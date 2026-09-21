@@ -50,6 +50,9 @@ public class DokumenManager : MonoBehaviour
     [Tooltip("Teks penjelasan/transkrip agar tulisan tangan mudah terbaca")]
     public TextMeshProUGUI teksPenjelasan;
 
+    [Header("Font UI")]
+    public TMP_FontAsset fontInterMedium;
+
     [Header("Audio (Opsional)")]
     public AudioSource audioSource;
     public AudioClip sfxBukaBuku;
@@ -58,10 +61,10 @@ public class DokumenManager : MonoBehaviour
     // Data penyimpanan statis agar dokumen tidak hilang saat reload scene / checkpoint
     public static HashSet<string> idDokumenTersimpan = new HashSet<string>();
     private List<DokumenItem> daftarDokumenKoleksi = new List<DokumenItem>();
-
     private DokumenItem dokumenSedangDibaca;
     private int indeksHalamanAktif = 0;
-    private bool sedangBukaDokumen = false;
+    [HideInInspector] public bool sedangBukaDokumen = false;
+    [HideInInspector] public int frameTerakhirBuka = -1;
 
     void Awake()
     {
@@ -71,6 +74,15 @@ public class DokumenManager : MonoBehaviour
         // Reset tracking statis saat scene dimuat ulang agar data segar
         idDokumenTersimpan.Clear();
         CariKomponenDaftarOtomatis();
+
+        try
+        {
+            PerbaikiLayoutDokumenGayaKonsisten();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("[DokumenManager] Catatan layout: " + ex.Message);
+        }
     }
 
     void Start()
@@ -82,6 +94,15 @@ public class DokumenManager : MonoBehaviour
 
         // Cari komponen UI otomatis jika belum terhubung di Inspector
         CariKomponenDaftarOtomatis();
+
+        try
+        {
+            PerbaikiLayoutDokumenGayaKonsisten();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("[DokumenManager] Catatan layout: " + ex.Message);
+        }
 
         // Pastikan EventSystem aktif dan mendukung New Input System
         PastikanEventSystemSiap();
@@ -101,6 +122,210 @@ public class DokumenManager : MonoBehaviour
             gambarHalamanUI.preserveAspect = true;
             gambarHalamanUI.raycastTarget = false;
         }
+
+        TMP_FontAsset fInter = DapatkanFontInterMedium();
+        if (fInter != null)
+        {
+            if (teksJudul != null) teksJudul.font = fInter;
+            if (teksPenjelasan != null) teksPenjelasan.font = fInter;
+            if (teksNomorHalaman != null) teksNomorHalaman.font = fInter;
+        }
+    }
+
+    /// <summary>
+    /// Menata layout panel dokumen agar identik dan konsisten dengan sistem Inventory Tas Item
+    /// Termasuk menambahkan Tab Navigasi TAS ITEM [R] & DOKUMEN [J] di bagian atas
+    /// </summary>
+    public void PerbaikiLayoutDokumenGayaKonsisten()
+    {
+        if (panelDaftarDokumen == null) return;
+
+        // 1. Siapkan Tab Navigasi di bagian atas daftar
+        Transform cariNav = panelDaftarDokumen.transform.Find("NavigasiTab_Dokumen");
+        if (cariNav == null)
+        {
+            GameObject navObj = new GameObject("NavigasiTab_Dokumen", typeof(RectTransform));
+            navObj.transform.SetParent(panelDaftarDokumen.transform, false);
+            cariNav = navObj.transform;
+
+            RectTransform rtNav = navObj.GetComponent<RectTransform>();
+            rtNav.anchorMin = new Vector2(0.5f, 0.5f);
+            rtNav.anchorMax = new Vector2(0.5f, 0.5f);
+            rtNav.pivot = new Vector2(0.5f, 0.5f);
+            rtNav.anchoredPosition = new Vector2(0f, 260f);
+            rtNav.sizeDelta = new Vector2(650f, 50f);
+
+            // Tab Tas Item [R] (Bisa diklik untuk pindah tas)
+            BuatTombolTab(navObj.transform, "TAS ITEM [R]", new Vector2(-190f, 0f), false, () =>
+            {
+                TutupPanelDokumen();
+                if (InventoryManager.Instance != null)
+                {
+                    InventoryManager.Instance.ToggleInventory();
+                }
+            });
+
+            // Tab Dokumen [J] (Sedang aktif)
+            BuatTombolTab(navObj.transform, "DOKUMEN [J]", new Vector2(0f, 0f), true, null);
+
+            // Tombol Tutup [Q]
+            BuatTombolTab(navObj.transform, "TUTUP [Q]", new Vector2(190f, 0f), false, () =>
+            {
+                TutupPanelDokumen();
+            });
+        }
+
+        // 2. Sesuaikan ScrollView_Daftar agar proporsional dan bersahabat dengan mata
+        Transform cariScroll = panelDaftarDokumen.transform.Find("ScrollView_Daftar");
+        if (cariScroll != null)
+        {
+            RectTransform rtScroll = cariScroll.GetComponent<RectTransform>();
+            if (rtScroll != null)
+            {
+                rtScroll.anchorMin = new Vector2(0.5f, 0.5f);
+                rtScroll.anchorMax = new Vector2(0.5f, 0.5f);
+                rtScroll.pivot = new Vector2(0.5f, 0.5f);
+                rtScroll.anchoredPosition = new Vector2(0f, -20f);
+                rtScroll.sizeDelta = new Vector2(650f, 500f);
+            }
+
+            Image img = cariScroll.GetComponent<Image>();
+            if (img != null)
+            {
+                img.color = new Color(0.06f, 0.06f, 0.08f, 0.75f);
+            }
+
+            ScrollRect sr = cariScroll.GetComponent<ScrollRect>();
+            if (sr != null)
+            {
+                sr.horizontal = false;
+                sr.vertical = true;
+                sr.movementType = ScrollRect.MovementType.Clamped;
+                sr.scrollSensitivity = 30f;
+            }
+
+            // Sembunyikan scrollbar visual lama agar tampilan bersih seperti inventory
+            Transform sbH = cariScroll.Find("Scrollbar Horizontal");
+            if (sbH != null) sbH.gameObject.SetActive(false);
+            Transform sbV = cariScroll.Find("Scrollbar Vertical");
+            if (sbV != null) sbV.gameObject.SetActive(false);
+        }
+
+        // 3. Rapikan Teks Kosong jika dokumen belum ada
+        if (teksDaftarKosong != null)
+        {
+            RectTransform rtTeks = teksDaftarKosong.GetComponent<RectTransform>();
+            if (rtTeks != null)
+            {
+                rtTeks.anchorMin = new Vector2(0.5f, 0.5f);
+                rtTeks.anchorMax = new Vector2(0.5f, 0.5f);
+                rtTeks.pivot = new Vector2(0.5f, 0.5f);
+                rtTeks.anchoredPosition = Vector2.zero;
+                rtTeks.sizeDelta = new Vector2(450f, 60f);
+            }
+
+            TextMeshProUGUI tmp = teksDaftarKosong.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
+            {
+                TMP_FontAsset fInter = DapatkanFontInterMedium();
+                if (fInter != null) tmp.font = fInter;
+                tmp.text = "(Belum ada dokumen yang ditemukan)";
+                tmp.fontSize = 20f;
+                tmp.fontStyle = FontStyles.Italic;
+                tmp.alignment = TextAlignmentOptions.Center;
+                tmp.color = new Color(0.6f, 0.58f, 0.52f, 0.75f);
+            }
+        }
+    }
+
+    public TMP_FontAsset DapatkanFontInterMedium()
+    {
+        if (fontInterMedium != null) return fontInterMedium;
+
+        if (prefabTombolDokumen != null)
+        {
+            var tmpPrefab = prefabTombolDokumen.GetComponentInChildren<TextMeshProUGUI>();
+            if (tmpPrefab != null && tmpPrefab.font != null && tmpPrefab.font.name.Contains("Inter"))
+            {
+                fontInterMedium = tmpPrefab.font;
+                return fontInterMedium;
+            }
+        }
+
+        TMP_FontAsset[] allFonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+        foreach (var f in allFonts)
+        {
+            if (f.name.Contains("Inter") && f.name.Contains("Medium"))
+            {
+                fontInterMedium = f;
+                return fontInterMedium;
+            }
+        }
+        foreach (var f in allFonts)
+        {
+            if (f.name.Contains("Inter"))
+            {
+                fontInterMedium = f;
+                return fontInterMedium;
+            }
+        }
+
+#if UNITY_EDITOR
+        fontInterMedium = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Inter/Inter_18pt-Medium SDF.asset");
+        if (fontInterMedium != null) return fontInterMedium;
+#endif
+
+        return null;
+    }
+
+    private GameObject BuatTombolTab(Transform parent, string judul, Vector2 pos, bool isActive, UnityEngine.Events.UnityAction onClick)
+    {
+        GameObject btnObj = new GameObject("Tab_" + judul, typeof(RectTransform), typeof(Image), typeof(Button));
+        btnObj.transform.SetParent(parent, false);
+
+        RectTransform rt = btnObj.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = new Vector2(175f, 42f);
+
+        Image img = btnObj.GetComponent<Image>();
+        img.color = isActive ? new Color(0.28f, 0.25f, 0.20f, 0.95f) : new Color(0.12f, 0.12f, 0.14f, 0.75f);
+
+        Button btn = btnObj.GetComponent<Button>();
+        ColorBlock cb = btn.colors;
+        cb.normalColor = img.color;
+        cb.highlightedColor = new Color(0.35f, 0.30f, 0.22f, 1f);
+        cb.pressedColor = new Color(0.08f, 0.08f, 0.09f, 1f);
+        cb.selectedColor = cb.highlightedColor;
+        btn.colors = cb;
+
+        if (onClick != null)
+        {
+            btn.onClick.AddListener(onClick);
+        }
+
+        // Teks Tab
+        GameObject txtObj = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        txtObj.transform.SetParent(btnObj.transform, false);
+
+        RectTransform rtTxt = txtObj.GetComponent<RectTransform>();
+        rtTxt.anchorMin = Vector2.zero;
+        rtTxt.anchorMax = Vector2.one;
+        rtTxt.sizeDelta = Vector2.zero;
+
+        TextMeshProUGUI tmp = txtObj.GetComponent<TextMeshProUGUI>();
+        TMP_FontAsset fInter = DapatkanFontInterMedium();
+        if (fInter != null) tmp.font = fInter;
+        tmp.text = judul;
+        tmp.fontSize = 16f;
+        tmp.fontStyle = isActive ? FontStyles.Bold : FontStyles.Normal;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = isActive ? new Color(0.96f, 0.94f, 0.88f, 1f) : new Color(0.65f, 0.63f, 0.58f, 0.85f);
+        tmp.characterSpacing = 3f;
+
+        return btnObj;
     }
 
     /// <summary>
@@ -211,16 +436,32 @@ public class DokumenManager : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current == null) return;
+        bool tombolBukaDitekan = false;
+        bool rDitekan = false;
+        bool qDitekan = false;
+        bool escDitekan = false;
 
-        // Cek input tombol buka / tutup dokumen (J)
-        if (Keyboard.current[tombolBuka].wasPressedThisFrame)
+        if (Keyboard.current != null)
         {
-            TogglePanelDokumen();
+            if (Keyboard.current[tombolBuka].wasPressedThisFrame) tombolBukaDitekan = true;
+            if (Keyboard.current.rKey.wasPressedThisFrame) rDitekan = true;
+            if (Keyboard.current.qKey.wasPressedThisFrame) qDitekan = true;
+            if (Keyboard.current.escapeKey.wasPressedThisFrame) escDitekan = true;
+        }
+        else
+        {
+            try
+            {
+                if (Input.GetKeyDown(KeyCode.J)) tombolBukaDitekan = true;
+                if (Input.GetKeyDown(KeyCode.R)) rDitekan = true;
+                if (Input.GetKeyDown(KeyCode.Q)) qDitekan = true;
+                if (Input.GetKeyDown(KeyCode.Escape)) escDitekan = true;
+            }
+            catch {}
         }
 
-        // Tombol ESC / Batal untuk menutup atau kembali ke daftar
-        if (Keyboard.current.escapeKey.wasPressedThisFrame && sedangBukaDokumen)
+        // 1. TUTUP DENGAN TOMBOL Q atau ESC
+        if ((qDitekan || escDitekan) && sedangBukaDokumen)
         {
             if (panelBacaDokumen != null && panelBacaDokumen.activeSelf)
             {
@@ -230,18 +471,41 @@ public class DokumenManager : MonoBehaviour
             {
                 TutupPanelDokumen();
             }
+            return;
         }
 
-        // Navigasi cepat dengan tombol panah kiri / kanan atau A / D saat membaca
+        // Cegah eksekusi pada frame yang sama saat baru dibuka / dialihkan dari tas item
+        if (Time.frameCount == frameTerakhirBuka) return;
+
+        // 2. Cek input tombol buka / tutup dokumen (J)
+        if (tombolBukaDitekan)
+        {
+            TogglePanelDokumen();
+        }
+
+        // 3. Tombol R saat Dokumen terbuka -> Pindah langsung ke Tas Item
+        if (rDitekan && sedangBukaDokumen)
+        {
+            TutupPanelDokumen();
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.ToggleInventory();
+            }
+        }
+
+        // 4. Navigasi cepat dengan tombol panah kiri / kanan atau A / D saat membaca
         if (sedangBukaDokumen && panelBacaDokumen != null && panelBacaDokumen.activeSelf)
         {
-            if (Keyboard.current.leftArrowKey.wasPressedThisFrame || Keyboard.current.aKey.wasPressedThisFrame)
+            if (Keyboard.current != null)
             {
-                HalamanSebelumnya();
-            }
-            else if (Keyboard.current.rightArrowKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame)
-            {
-                HalamanBerikutnya();
+                if (Keyboard.current.leftArrowKey.wasPressedThisFrame || Keyboard.current.aKey.wasPressedThisFrame)
+                {
+                    HalamanSebelumnya();
+                }
+                else if (Keyboard.current.rightArrowKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame)
+                {
+                    HalamanBerikutnya();
+                }
             }
         }
     }
@@ -263,13 +527,24 @@ public class DokumenManager : MonoBehaviour
     /// </summary>
     public void BukaPanelDokumen()
     {
+        // Tutup tas inventory item jika sedang terbuka agar tidak bertabrakan
+        if (InventoryManager.Instance != null && InventoryManager.Instance.inventoryAktif)
+        {
+            InventoryManager.Instance.ToggleInventory();
+        }
+
+        CariKomponenDaftarOtomatis();
+        PerbaikiLayoutDokumenGayaKonsisten();
+
         sedangBukaDokumen = true;
+        frameTerakhirBuka = Time.frameCount;
         if (panelUtama != null) panelUtama.SetActive(true);
 
         // 1. OTOMATIS PAUSE GAME
         Time.timeScale = 0f;
 
         // 2. Kunci player & aktifkan kursor mouse
+        if (scriptPlayer == null) scriptPlayer = FindAnyObjectByType<PlayerController>();
         if (scriptPlayer != null)
         {
             scriptPlayer.bukaInventory = true;
@@ -433,6 +708,8 @@ public class DokumenManager : MonoBehaviour
         TextMeshProUGUI teksTombol = tombolObj.GetComponentInChildren<TextMeshProUGUI>();
         if (teksTombol != null)
         {
+            TMP_FontAsset fInter = DapatkanFontInterMedium();
+            if (fInter != null) teksTombol.font = fInter;
             teksTombol.text = data.judulDokumen;
             teksTombol.color = new Color(0.92f, 0.90f, 0.84f, 1f); // Warna putih gading / kertas tua
             teksTombol.alignment = TextAlignmentOptions.MidlineLeft;
