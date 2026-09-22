@@ -77,6 +77,9 @@ public class PlayerInteract : MonoBehaviour
             if (katup == null) katup = hit.collider.GetComponentInChildren<ToiletValve>();
             DokumenPickup dokumen = hit.collider.GetComponent<DokumenPickup>();
             TriggerTekaTeki tekaTeki = hit.collider.GetComponent<TriggerTekaTeki>();
+            PapanKayuPintu papan = hit.collider.GetComponent<PapanKayuPintu>();
+            if (papan == null) papan = hit.collider.GetComponentInParent<PapanKayuPintu>();
+            if (papan != null && papan.sudahDilepas) papan = null;
 
             // Sofa hanya bisa diinteraksi jika cutscene belum pernah terpicu
             if (sofa != null && sofa.sudahTerpicu)
@@ -106,7 +109,7 @@ public class PlayerInteract : MonoBehaviour
                 telepon = null;
             }
 
-            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null || tekaTeki != null;
+            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null || tekaTeki != null || papan != null;
 
             if (bisaDiinteraksi)
             {
@@ -146,6 +149,11 @@ public class PlayerInteract : MonoBehaviour
                     else if (korek != null)
                     {
                         teksInteraksi.text = "[E] Ambil Korek Api";
+                    }
+                    else if (papan != null)
+                    {
+                        bool punyaLinggis = papan.CekPunyaLinggis();
+                        teksInteraksi.text = punyaLinggis ? $"[E] Lepas Papan ({papan.namaItemDibutuhkan})" : "[E] Papan Kayu Menghalangi";
                     }
                     else if (pintu != null)
                     {
@@ -242,6 +250,15 @@ public class PlayerInteract : MonoBehaviour
                     katup.PasangGagang();
                     return;
                 }
+            }
+
+            // Coba lepas papan kayu dengan linggis
+            PapanKayuPintu papan = objekDituju.GetComponent<PapanKayuPintu>();
+            if (papan == null) papan = objekDituju.GetComponentInParent<PapanKayuPintu>();
+            if (papan != null && !papan.sudahDilepas)
+            {
+                papan.InteraksiPapan();
+                return;
             }
 
             // Coba buka pintu
