@@ -26,6 +26,16 @@ public class ScreenFader : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reset layar ke transparan secara instan. Hentikan semua coroutine fade yang sedang berjalan.
+    /// Dipanggil saat dev lompat checkpoint agar layar hitam dari cutscene tidak tertinggal.
+    /// </summary>
+    public void ResetKeTransparan()
+    {
+        StopAllCoroutines();
+        if (layarHitam != null) SetAlpha(0f);
+    }
+
     // Fungsi berkedip (mengantuk)
     public IEnumerator EfekBerkedip(int jumlahKedipan, float kecepatan)
     {

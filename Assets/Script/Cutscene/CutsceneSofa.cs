@@ -163,6 +163,39 @@ public class CutsceneSofa : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Kembalikan pencahayaan & skybox ke pagi/sore awal game.
+    /// Dipakai saat dev skip kembali ke Misi 1 agar kamar tidak tertinggal gelap malam.
+    /// </summary>
+    public void ResetKeKondisiPagiInstan()
+    {
+        sudahTerpicu = false;
+        barangBisaDiinteraksi = false;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+
+        if (playerCamera != null)
+        {
+            Camera cam = playerCamera.GetComponent<Camera>();
+            if (cam != null)
+            {
+                cam.clearFlags = CameraClearFlags.Skybox;
+            }
+        }
+
+        if (skyboxSore != null)
+        {
+            RenderSettings.skybox = skyboxSore;
+        }
+
+        RenderSettings.fog = false;
+
+        if (matahari != null) matahari.enabled = true;
+
+        DynamicGI.UpdateEnvironment();
+    }
+
     public void InteraksiSofa()
     {
         if (!sudahTerpicu)

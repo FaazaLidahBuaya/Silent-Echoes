@@ -21,6 +21,13 @@ public class PlayerInteract : MonoBehaviour
 
     void Update()
     {
+        // Jangan jalankan interaksi jika panel dev skip misi sedang aktif
+        if (DevMissionSkipUI.Instance != null && DevMissionSkipUI.Instance.panelAktif)
+        {
+            ResetCrosshairDanTeks();
+            return;
+        }
+
         if (Keyboard.current == null) return;
 
         // 1. Selalu jalankan deteksi objek setiap frame
@@ -80,6 +87,8 @@ public class PlayerInteract : MonoBehaviour
             PapanKayuPintu papan = hit.collider.GetComponent<PapanKayuPintu>();
             if (papan == null) papan = hit.collider.GetComponentInParent<PapanKayuPintu>();
             if (papan != null && papan.sudahDilepas) papan = null;
+            JarumJamInteractable jarum = hit.collider.GetComponent<JarumJamInteractable>();
+            if (jarum == null) jarum = hit.collider.GetComponentInParent<JarumJamInteractable>();
 
             // Sofa hanya bisa diinteraksi jika cutscene belum pernah terpicu
             if (sofa != null && sofa.sudahTerpicu)
@@ -109,7 +118,7 @@ public class PlayerInteract : MonoBehaviour
                 telepon = null;
             }
 
-            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null || tekaTeki != null || papan != null;
+            bool bisaDiinteraksi = pintu != null || sofa != null || korek != null || laci != null || tuas != null || item != null || telepon != null || katup != null || dokumen != null || tekaTeki != null || papan != null || jarum != null;
 
             if (bisaDiinteraksi)
             {
@@ -202,6 +211,10 @@ public class PlayerInteract : MonoBehaviour
                     {
                         teksInteraksi.text = $"[E] {tekaTeki.promptInteraksi}";
                     }
+                    else if (jarum != null)
+                    {
+                        teksInteraksi.text = jarum.DapatkanPrompt();
+                    }
                     teksInteraksi.gameObject.SetActive(true);
                 }
             }
@@ -258,6 +271,15 @@ public class PlayerInteract : MonoBehaviour
             if (papan != null && !papan.sudahDilepas)
             {
                 papan.InteraksiPapan();
+                return;
+            }
+
+            // Coba putar jarum jam dinding teka-teki
+            JarumJamInteractable jarum = objekDituju.GetComponent<JarumJamInteractable>();
+            if (jarum == null) jarum = objekDituju.GetComponentInParent<JarumJamInteractable>();
+            if (jarum != null)
+            {
+                jarum.Interaksi();
                 return;
             }
 

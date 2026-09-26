@@ -49,6 +49,13 @@ public class ToiletValve : MonoBehaviour
         bisaMelonggarSendiri = false;
         timerLonggar = 0f;
 
+        // Pastikan AudioSource tidak memutar apapun di awal game
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.Stop();
+        }
+
         if (wheelTransform != null)
         {
             rotasiAwalWheel = wheelTransform.localRotation;

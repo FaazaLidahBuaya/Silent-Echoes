@@ -25,6 +25,7 @@ public class AmbientManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            transform.SetParent(null); // Jadikan root agar DontDestroyOnLoad bekerja
             DontDestroyOnLoad(gameObject);
         }
         else
