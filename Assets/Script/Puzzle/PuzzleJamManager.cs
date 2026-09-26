@@ -14,26 +14,31 @@ public class PuzzleJamManager : MonoBehaviour
     [Tooltip("Daftar 5 jam dinding yang harus diselesaikan pemain")]
     public List<JamDindingPuzzle> daftarJam = new List<JamDindingPuzzle>();
 
-    [Header("Titik Suara Ruang Tengah")]
-    [Tooltip("Transform posisi sumber suara benturan di ruang tengah")]
-    public Transform posisiRuangTengah;
+    [Header("Pengaturan Chest (Peti)")]
+    [Tooltip("Transform untuk tutup peti yang akan terbuka")]
+    public Transform tutupChest;
+    [Tooltip("GameObject kunci kamar anak yang ada di dalam peti")]
+    public GameObject kunciKamarAnak;
+    
+    [Header("Pengaturan Pertukaran Objek (Tangga)")]
+    public GameObject objekPenghalangLama;
+    public GameObject objekPenghalangBaru;
 
-    [Header("Pengaturan Audio Benturan (Brak)")]
-    public AudioSource audioSourceBrak;
-    public AudioClip sfxBrakRuangTengah;
-    [Range(0f, 1f)] public float volumeBrak = 1.0f;
-    public float jarakDengarBrak = 35f;
+    [Header("Pengaturan Audio (Opsional)")]
+    public AudioSource audioSourceChest;
+    public AudioClip sfxChestBuka;
+    [Range(0f, 1f)] public float volumeSfx = 1.0f;
 
     [Header("Subtitle")]
     public bool tampilkanSubtitle = true;
-    public string subtitleBrak = "*BRAKKK!!* (Ada suara benturan keras dari arah ruang tengah!)";
+    public string subtitlePeti = "(Terdengar suara peti yang terbuka di dekat sini)";
     public float durasiSubtitle = 4.0f;
 
     [Header("Sinkronisasi Quest")]
     public bool perbaruiQuest = true;
-    public string judulQuestBerikutnya = "Periksa Ruang Tengah";
+    public string judulQuestBerikutnya = "Periksa Peti";
     [TextArea(2, 3)]
-    public string deskripsiQuestBerikutnya = "Ada suara benturan keras dari arah ruang tengah. Cari tahu apa yang terjadi.";
+    public string deskripsiQuestBerikutnya = "Peti di ruangan ini telah terbuka. Ambil kunci di dalamnya untuk membuka kamar anak di lantai atas.";
 
     [Header("Sinkronisasi TekaTekiManager")]
     public bool laporkanKeTekaTekiManager = true;
@@ -67,46 +72,36 @@ public class PuzzleJamManager : MonoBehaviour
             daftarJam.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
         }
 
-        // 2. Cari titik ruang tengah jika belum ada
-        if (posisiRuangTengah == null)
+        // 2. Setup Kunci agar tidak aktif saat game dimulai (kecuali puzzle sudah selesai)
+        if (kunciKamarAnak != null && !puzzleSelesai)
         {
-            GameObject blokir = GameObject.Find("Cutscene Blokir tengah");
-            if (blokir != null)
-            {
-                posisiRuangTengah = blokir.transform;
-            }
-            else
-            {
-                GameObject objTengah = GameObject.Find("RuangTengah");
-                if (objTengah != null) posisiRuangTengah = objTengah.transform;
-            }
+            kunciKamarAnak.SetActive(false);
         }
 
-        // 3. Setup AudioSource 3D di titik ruang tengah
-        if (audioSourceBrak == null)
+        if (!puzzleSelesai)
         {
-            GameObject wadahAudio = posisiRuangTengah != null ? posisiRuangTengah.gameObject : gameObject;
-            audioSourceBrak = wadahAudio.GetComponent<AudioSource>();
-            if (audioSourceBrak == null)
-            {
-                audioSourceBrak = wadahAudio.AddComponent<AudioSource>();
-            }
-            audioSourceBrak.playOnAwake = false;
-            audioSourceBrak.spatialBlend = 1f; // 3D Audio
-            audioSourceBrak.minDistance = 3f;
-            audioSourceBrak.maxDistance = jarakDengarBrak;
-            audioSourceBrak.rolloffMode = AudioRolloffMode.Linear;
+            if (objekPenghalangLama != null) objekPenghalangLama.SetActive(true);
+            if (objekPenghalangBaru != null) objekPenghalangBaru.SetActive(false);
         }
 
-        // 4. Editor fallback untuk SFX Brak
+        // 3. Setup AudioSource
+        if (audioSourceChest == null && tutupChest != null)
+        {
+            audioSourceChest = tutupChest.gameObject.GetComponent<AudioSource>();
+            if (audioSourceChest == null)
+            {
+                audioSourceChest = tutupChest.gameObject.AddComponent<AudioSource>();
+            }
+            audioSourceChest.playOnAwake = false;
+            audioSourceChest.spatialBlend = 1f; // 3D Audio
+        }
+
+        // 4. Editor fallback untuk SFX Buka Peti
 #if UNITY_EDITOR
-        if (sfxBrakRuangTengah == null)
+        if (sfxChestBuka == null)
         {
-            sfxBrakRuangTengah = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Cutscene/distract.mp3");
-            if (sfxBrakRuangTengah == null)
-            {
-                sfxBrakRuangTengah = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Item/woodHit.mp3");
-            }
+            sfxChestBuka = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Item/door_open.mp3");
+            // Bisa diganti dengan sfx yang pas nantinya
         }
 #endif
     }
@@ -142,7 +137,7 @@ public class PuzzleJamManager : MonoBehaviour
         if (puzzleSelesai) return;
         puzzleSelesai = true;
 
-        Debug.Log("<color=green>[PuzzleJamManager]</color> SELURUH 5 JAM BERHASIL DISINKRONKAN! Memainkan suara BRAK di ruang tengah...");
+        Debug.Log("<color=green>[PuzzleJamManager]</color> SELURUH 5 JAM BERHASIL DISINKRONKAN! Membuka peti...");
 
         // 1. Kunci semua jam agar tidak berubah lagi
         foreach (JamDindingPuzzle jam in daftarJam)
@@ -150,37 +145,83 @@ public class PuzzleJamManager : MonoBehaviour
             if (jam != null) jam.terkunci = true;
         }
 
-        // 2. Mainkan suara BRAK dari arah ruang tengah
-        if (audioSourceBrak != null && sfxBrakRuangTengah != null)
+        // 2. Mainkan suara buka peti
+        if (audioSourceChest != null && sfxChestBuka != null)
         {
-            audioSourceBrak.PlayOneShot(sfxBrakRuangTengah, volumeBrak);
+            audioSourceChest.PlayOneShot(sfxChestBuka, volumeSfx);
         }
-        else if (sfxBrakRuangTengah != null)
+        else if (sfxChestBuka != null)
         {
-            Vector3 pos = posisiRuangTengah != null ? posisiRuangTengah.position : transform.position;
-            AudioSource.PlayClipAtPoint(sfxBrakRuangTengah, pos, volumeBrak);
+            Vector3 pos = tutupChest != null ? tutupChest.position : transform.position;
+            AudioSource.PlayClipAtPoint(sfxChestBuka, pos, volumeSfx);
         }
 
         // 3. Tampilkan Subtitle
-        if (tampilkanSubtitle && SubtitleManager.Instance != null && !string.IsNullOrEmpty(subtitleBrak))
+        if (tampilkanSubtitle && SubtitleManager.Instance != null && !string.IsNullOrEmpty(subtitlePeti))
         {
-            SubtitleManager.Instance.TampilkanSubtitle(subtitleBrak, durasiSubtitle);
+            SubtitleManager.Instance.TampilkanSubtitle(subtitlePeti, durasiSubtitle);
         }
 
-        // 4. Sinkronisasi dengan TekaTekiManager (jika aktif)
+        // 4. Buka peti dan munculkan kunci
+        if (tutupChest != null)
+        {
+            StartCoroutine(AnimasiBukaPeti());
+        }
+        
+        if (kunciKamarAnak != null)
+        {
+            kunciKamarAnak.SetActive(true);
+            Debug.Log("[PuzzleJamManager] Memunculkan kunci kamar anak di dalam peti.");
+        }
+
+        // Tukar objek penghalang
+        if (objekPenghalangLama != null) objekPenghalangLama.SetActive(false);
+        if (objekPenghalangBaru != null) objekPenghalangBaru.SetActive(true);
+
+        // 5. Sinkronisasi dengan TekaTekiManager (jika aktif)
         if (laporkanKeTekaTekiManager && TekaTekiManager.Instance != null)
         {
             TekaTekiManager.Instance.LaporkanTekaTekiSelesai(idTekaTekiManager);
         }
 
-        // 5. Perbarui Quest aktif
+        // 6. Perbarui Quest aktif
         if (perbaruiQuest && QuestManager.Instance != null && !string.IsNullOrEmpty(judulQuestBerikutnya))
         {
             QuestManager.Instance.SetQuest(judulQuestBerikutnya, deskripsiQuestBerikutnya);
         }
 
-        // 6. Jalankan UnityEvent untuk kebutuhan level designer (buka pintu, trigger monster, dll)
+        // 7. Picu Autosave
+        if (GameCheckpointManager.Instance != null)
+        {
+            GameCheckpointManager.Instance.TriggerAutosave();
+        }
+        else if (AutosaveUI.Instance != null)
+        {
+            AutosaveUI.Instance.TriggerAutosave();
+        }
+
+        // 8. Jalankan UnityEvent untuk kebutuhan level designer (buka pintu, trigger monster, dll)
         onSemuaJamSelesai?.Invoke();
+    }
+
+    private IEnumerator AnimasiBukaPeti()
+    {
+        float durasi = 1.5f;
+        float waktuBerjalan = 0f;
+        
+        Quaternion rotasiAwal = tutupChest.localRotation;
+        // Asumsi peti dibuka pada sumbu X lokal (biasa untuk engsel peti)
+        // Buka sekitar -50 derajat agar tidak terlalu keatas
+        Quaternion rotasiTarget = rotasiAwal * Quaternion.Euler(-50f, 0f, 0f);
+
+        while (waktuBerjalan < durasi)
+        {
+            tutupChest.localRotation = Quaternion.Slerp(rotasiAwal, rotasiTarget, waktuBerjalan / durasi);
+            waktuBerjalan += Time.deltaTime;
+            yield return null;
+        }
+
+        tutupChest.localRotation = rotasiTarget;
     }
 
     [ContextMenu("Tes Selesaikan Puzzle Jam")]

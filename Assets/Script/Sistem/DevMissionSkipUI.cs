@@ -488,6 +488,25 @@ public class DevMissionSkipUI : MonoBehaviour
         if (PuzzleJamManager.Instance != null)
         {
             PuzzleJamManager.Instance.puzzleSelesai = true;
+            // Buka peti secara instan
+            if (PuzzleJamManager.Instance.tutupChest != null)
+            {
+                PuzzleJamManager.Instance.tutupChest.localRotation = PuzzleJamManager.Instance.tutupChest.localRotation * Quaternion.Euler(-50f, 0f, 0f);
+            }
+            if (PuzzleJamManager.Instance.kunciKamarAnak != null)
+            {
+                PuzzleJamManager.Instance.kunciKamarAnak.SetActive(true);
+            }
+            
+            // Tukar objek penghalang instan
+            if (PuzzleJamManager.Instance.objekPenghalangLama != null)
+            {
+                PuzzleJamManager.Instance.objekPenghalangLama.SetActive(false);
+            }
+            if (PuzzleJamManager.Instance.objekPenghalangBaru != null)
+            {
+                PuzzleJamManager.Instance.objekPenghalangBaru.SetActive(true);
+            }
         }
 
         // 3. Laporkan ke TekaTekiManager
@@ -504,19 +523,19 @@ public class DevMissionSkipUI : MonoBehaviour
             PindahkanPlayer(pos, Quaternion.LookRotation(hadapRuangTengah));
         }
 
-        // 5. Update quest & subtitle suara benturan
+        // 5. Update quest & subtitle suara
         if (QuestManager.Instance != null)
         {
-            QuestManager.Instance.SetQuest("Periksa Ruang Tengah", "Ada suara benturan keras dari arah ruang tengah. Cari tahu apa yang terjadi.");
+            QuestManager.Instance.SetQuest("Periksa Peti", "Peti di ruangan ini telah terbuka. Ambil kunci di dalamnya untuk membuka kamar anak di lantai atas.");
         }
         if (SubtitleManager.Instance != null)
         {
-            SubtitleManager.Instance.TampilkanSubtitle("*BRAKKK!!* (Ada suara benturan keras dari arah ruang tengah!)", 4f);
+            SubtitleManager.Instance.TampilkanSubtitle("(Terdengar suara peti yang terbuka di dekat sini)", 4f);
         }
 
         PicuAutosave();
         MainkanSFXLompat();
-        TampilkanNotifDev("Misi 5: Setelah Puzzle Jam Selesai (Periksa Ruang Tengah) [Terbaru]");
+        TampilkanNotifDev("Misi 5: Setelah Puzzle Jam Selesai (Periksa Peti) [Terbaru]");
     }
 
     // =========================================================================
@@ -588,10 +607,10 @@ public class DevMissionSkipUI : MonoBehaviour
             return true;
         }
 
-        if (PuzzleJamManager.Instance != null && PuzzleJamManager.Instance.posisiRuangTengah != null)
+        if (PuzzleJamManager.Instance != null && PuzzleJamManager.Instance.tutupChest != null)
         {
-            posisi = PuzzleJamManager.Instance.posisiRuangTengah.position;
-            hadap = ArahDatarMenghadap(PuzzleJamManager.Instance.posisiRuangTengah);
+            posisi = PuzzleJamManager.Instance.tutupChest.position;
+            hadap = ArahDatarMenghadap(PuzzleJamManager.Instance.tutupChest);
             return true;
         }
 

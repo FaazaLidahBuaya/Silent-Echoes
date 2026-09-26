@@ -89,20 +89,25 @@ public static class SetupPuzzleJamEditor
 
         manager.daftarJam = daftarKomponenJam;
 
-        // Cari titik ruang tengah
-        GameObject blokir = GameObject.Find("Cutscene Blokir tengah");
-        if (blokir != null)
+        // Cari objek Peti dan Kunci (otomatis mencari berdasarkan nama standar)
+        GameObject peti = GameObject.Find("Chest");
+        if (peti != null)
         {
-            manager.posisiRuangTengah = blokir.transform;
+            Transform tutup = peti.transform.Find("Lid");
+            if (tutup == null) tutup = peti.transform.Find("Tutup");
+            if (tutup != null) manager.tutupChest = tutup;
+            else manager.tutupChest = peti.transform;
         }
 
-        // Hubungkan SFX
-        AudioClip sfxBrak = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Cutscene/distract.mp3");
-        if (sfxBrak == null)
+        GameObject kunci = GameObject.Find("Kunci Kamar Anak");
+        if (kunci != null)
         {
-            sfxBrak = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Item/woodHit.mp3");
+            manager.kunciKamarAnak = kunci;
         }
-        manager.sfxBrakRuangTengah = sfxBrak;
+
+        // Hubungkan SFX Buka Peti
+        AudioClip sfxChest = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Item/door_open.mp3");
+        manager.sfxChestBuka = sfxChest;
 
         manager.InisialisasiManager();
         EditorUtility.SetDirty(manager.gameObject);
