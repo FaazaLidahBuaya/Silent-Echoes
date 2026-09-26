@@ -32,12 +32,22 @@ public class ToiletFlood : MonoBehaviour
     [Header("Referensi Katup")]
     public ToiletValve katupToilet;
 
+    [Header("Audio Air Meluap (3D Spatial Audio)")]
+    public AudioSource audioSourceAir;
+    [Tooltip("SFX semburan/desisan air meluap di toilet (Looping 3D)")]
+    public AudioClip sfxAirMeluap;
+    [Range(0f, 1f)] public float volumeMaksimalAir = 0.85f;
+    public float jarakMaksimalDengar = 14f;
+
     private Material instancedMaterial;
     private List<Material> instancedRembesanMaterials = new List<Material>();
     private Coroutine coroutineFade;
+    private Coroutine coroutineFadeAudio;
 
     void Start()
     {
+        InisialisasiAudioAir();
+
         if (waterRenderer != null)
         {
             instancedMaterial = waterRenderer.material;
@@ -97,6 +107,96 @@ public class ToiletFlood : MonoBehaviour
 
         floodLevel = Mathf.Clamp01(floodLevel);
         UpdateVisualAir();
+        UpdateAudioAir();
+    }
+
+    private void InisialisasiAudioAir()
+    {
+        if (audioSourceAir == null)
+        {
+            audioSourceAir = GetComponent<AudioSource>();
+            if (audioSourceAir == null)
+            {
+                audioSourceAir = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
+        audioSourceAir.spatialBlend = 1f; // 100% 3D Audio!
+        audioSourceAir.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceAir.minDistance = 1.5f;
+        audioSourceAir.maxDistance = jarakMaksimalDengar;
+        audioSourceAir.loop = true;
+        audioSourceAir.playOnAwake = false;
+
+#if UNITY_EDITOR
+        if (sfxAirMeluap == null)
+        {
+            sfxAirMeluap = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/Item/Bocorair.mp3");
+        }
+#endif
+        if (sfxAirMeluap != null)
+        {
+            audioSourceAir.clip = sfxAirMeluap;
+        }
+    }
+
+    private void UpdateAudioAir()
+    {
+        if (audioSourceAir == null) return;
+        if (audioSourceAir.clip == null && sfxAirMeluap != null) audioSourceAir.clip = sfxAirMeluap;
+        if (audioSourceAir.clip == null) return;
+
+        bool bocorAktif = isFlooding && (katupToilet == null || katupToilet.tightness < batasSurutTightness);
+
+        if (bocorAktif)
+        {
+            if (!audioSourceAir.isPlaying)
+            {
+                audioSourceAir.volume = 0f;
+                audioSourceAir.Play();
+            }
+
+            // Volume berbanding lurus dengan kelonggaran katup & luapan
+            float faktorLonggar = (katupToilet != null) ? Mathf.Clamp01(1f - katupToilet.tightness) : 1f;
+            float targetVolume = Mathf.Lerp(0.35f, volumeMaksimalAir, faktorLonggar);
+            audioSourceAir.volume = Mathf.MoveTowards(audioSourceAir.volume, targetVolume, Time.deltaTime * 0.8f);
+        }
+        else
+        {
+            if (audioSourceAir.isPlaying)
+            {
+                audioSourceAir.volume = Mathf.MoveTowards(audioSourceAir.volume, 0f, Time.deltaTime * 1.5f);
+                if (audioSourceAir.volume <= 0.01f)
+                {
+                    audioSourceAir.Stop();
+                }
+            }
+        }
+    }
+
+    public void HentikanAudioAir(float durasiFade = 1.5f)
+    {
+        if (audioSourceAir != null && audioSourceAir.isPlaying)
+        {
+            if (coroutineFadeAudio != null) StopCoroutine(coroutineFadeAudio);
+            coroutineFadeAudio = StartCoroutine(ProsesFadeAudioAir(durasiFade));
+        }
+    }
+
+    private IEnumerator ProsesFadeAudioAir(float durasi)
+    {
+        if (audioSourceAir == null) yield break;
+        float startVol = audioSourceAir.volume;
+        float t = 0f;
+        while (t < durasi)
+        {
+            t += Time.deltaTime;
+            audioSourceAir.volume = Mathf.Lerp(startVol, 0f, t / durasi);
+            yield return null;
+        }
+        audioSourceAir.volume = 0f;
+        audioSourceAir.Stop();
+        coroutineFadeAudio = null;
     }
 
     /// <summary>
@@ -110,6 +210,13 @@ public class ToiletFlood : MonoBehaviour
 
         AktifkanMeshRembesan(true);
         UpdateVisualAir(1f);
+
+        // Langsung mulai semburan audio air 3D
+        if (audioSourceAir != null && audioSourceAir.clip != null && !audioSourceAir.isPlaying)
+        {
+            audioSourceAir.volume = volumeMaksimalAir * 0.5f;
+            audioSourceAir.Play();
+        }
     }
 
     /// <summary>
@@ -120,15 +227,17 @@ public class ToiletFlood : MonoBehaviour
         isFlooding = false;
         if (coroutineFade != null) StopCoroutine(coroutineFade);
         coroutineFade = StartCoroutine(ProsesFadeOutRembesan(durasiFade));
+        HentikanAudioAir(durasiFade);
     }
 
     public void MatikanRembesanLangsung()
     {
-        if (coroutineFade != null) StopCoroutine(coroutineFade);
         isFlooding = false;
+        if (coroutineFade != null) StopCoroutine(coroutineFade);
         floodLevel = 0f;
         AktifkanMeshRembesan(false);
         UpdateVisualAir(0f);
+        if (audioSourceAir != null) audioSourceAir.Stop();
     }
 
     public void AktifkanMeshRembesan(bool aktif)

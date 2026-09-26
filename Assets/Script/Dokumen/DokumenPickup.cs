@@ -16,14 +16,8 @@ public class DokumenPickup : MonoBehaviour
     {
         if (DokumenManager.Instance != null)
         {
-            // Tambahkan dokumen ke inventori dokumen
-            DokumenManager.Instance.TambahDokumen(dataDokumen, langsungBukaSaatDiambil);
-
-            // Putar suara ambil dokumen
-            if (sfxAmbilDokumen != null && DokumenManager.Instance.audioSource != null)
-            {
-                DokumenManager.Instance.audioSource.PlayOneShot(sfxAmbilDokumen);
-            }
+            // Tambahkan dokumen ke inventori dokumen (suara diatur satu pintu di DokumenManager agar tidak dobel)
+            DokumenManager.Instance.TambahDokumen(dataDokumen, langsungBukaSaatDiambil, sfxAmbilDokumen);
 
             // Sembunyikan objek dokumen dari dunia 3D
             gameObject.SetActive(false);

@@ -40,6 +40,14 @@ public class SelokerQuestManager : MonoBehaviour
     public AudioClip sfxFnafScreamer;        // Suara teriakan screamer FNAF
     public AudioClip sfxFlashPutih;          // Suara hantaman / sting saat flash putih menyala singkat (impact)
 
+    [Header("Audio Ambient Khusus Event Seloker")]
+    [Tooltip("Audio ambient/tensi mencekam yang berputar selama event Seloker berlangsung")]
+    public AudioClip ambientSeloker;
+    public AudioSource audioSourceAmbient;
+    [Range(0f, 1f)] public float volumeAmbient = 0.65f;
+    public float durasiFadeAmbient = 2f;
+    private Coroutine coroutineFadeAmbient;
+
     [Header("Status Quest")]
     public bool questAktif = false;
     public bool toilet2BocorDimulai = false;
@@ -116,6 +124,15 @@ public class SelokerQuestManager : MonoBehaviour
         {
             katup2.onTightenedMax.AddListener(OnKatup2Ditutup);
         }
+
+        // Siapkan AudioSource Ambient 2D khusus event Seloker
+        if (audioSourceAmbient == null)
+        {
+            audioSourceAmbient = gameObject.AddComponent<AudioSource>();
+        }
+        audioSourceAmbient.loop = true;
+        audioSourceAmbient.playOnAwake = false;
+        audioSourceAmbient.spatialBlend = 0f; // 2D background atmosphere
     }
 
     /// <summary>
@@ -126,6 +143,9 @@ public class SelokerQuestManager : MonoBehaviour
         if (questAktif) return;
         questAktif = true;
         Debug.Log("<color=cyan>[SelokerQuest]</color> MulaiQuestToilet() dipanggil! questAktif = true");
+
+        // Mulai audio ambient tensi horor khusus event Seloker
+        MulaiAmbientSeloker();
 
         // Inisialisasi paksa katup 1: pastikan state awal bersih
         if (katup1 != null)
@@ -368,6 +388,9 @@ public class SelokerQuestManager : MonoBehaviour
         if (toilet1 != null) toilet1.SelesaikanBanjirFade(2.5f);
         if (toilet2 != null) toilet2.SelesaikanBanjirFade(2.5f);
 
+        // Hentikan suara ambient tensi Seloker secara halus
+        HentikanAmbientSeloker(2.5f);
+
         if (SubtitleManager.Instance != null)
         {
             SubtitleManager.Instance.TampilkanSubtitle("(Syukurlah... airnya berhenti keluar dan mulai surut kembali.)", 4f);
@@ -390,6 +413,61 @@ public class SelokerQuestManager : MonoBehaviour
 
         // Jalankan event lanjutan: Suara mencurigakan dari arah dapur & kemunculan kunci
         StartCoroutine(ProsesEventDapurSetelahMenang());
+    }
+
+    public void MulaiAmbientSeloker()
+    {
+        if (audioSourceAmbient == null)
+        {
+            audioSourceAmbient = gameObject.AddComponent<AudioSource>();
+            audioSourceAmbient.loop = true;
+            audioSourceAmbient.playOnAwake = false;
+            audioSourceAmbient.spatialBlend = 0f;
+        }
+
+#if UNITY_EDITOR
+        if (ambientSeloker == null)
+        {
+            ambientSeloker = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/SFX/BGM/WC.mp3");
+        }
+#endif
+
+        if (ambientSeloker != null)
+        {
+            audioSourceAmbient.clip = ambientSeloker;
+            audioSourceAmbient.volume = 0f;
+            audioSourceAmbient.Play();
+            if (coroutineFadeAmbient != null) StopCoroutine(coroutineFadeAmbient);
+            coroutineFadeAmbient = StartCoroutine(ProsesFadeAmbient(volumeAmbient, durasiFadeAmbient, false));
+        }
+    }
+
+    public void HentikanAmbientSeloker(float durasi = 2f)
+    {
+        if (audioSourceAmbient != null && audioSourceAmbient.isPlaying)
+        {
+            if (coroutineFadeAmbient != null) StopCoroutine(coroutineFadeAmbient);
+            coroutineFadeAmbient = StartCoroutine(ProsesFadeAmbient(0f, durasi, true));
+        }
+    }
+
+    private IEnumerator ProsesFadeAmbient(float targetVolume, float durasi, bool stopAtEnd)
+    {
+        if (audioSourceAmbient == null) yield break;
+        float startVol = audioSourceAmbient.volume;
+        float elapsed = 0f;
+        while (elapsed < durasi)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            audioSourceAmbient.volume = Mathf.Lerp(startVol, targetVolume, elapsed / durasi);
+            yield return null;
+        }
+        audioSourceAmbient.volume = targetVolume;
+        if (stopAtEnd)
+        {
+            audioSourceAmbient.Stop();
+        }
+        coroutineFadeAmbient = null;
     }
 
     private IEnumerator ProsesEventDapurSetelahMenang()
@@ -437,6 +515,11 @@ public class SelokerQuestManager : MonoBehaviour
     IEnumerator ProsesGameOverFNAF(int toiletPecahIndex)
     {
         sedangProsesGameOver = true;
+
+        // Matikan suara ambient & suara air seketika agar jumpscare & impact menggelegar
+        if (audioSourceAmbient != null) audioSourceAmbient.Stop();
+        if (toilet1 != null) toilet1.MatikanRembesanLangsung();
+        if (toilet2 != null) toilet2.MatikanRembesanLangsung();
 
         // 0. PASTIKAN KOREK API MENYALA TERANG & TIDAK BISA MATI (AGAR MONSTER SELALU TERLIHAT!)
         KorekTangan korek = FindAnyObjectByType<KorekTangan>();
@@ -657,6 +740,7 @@ public class SelokerQuestManager : MonoBehaviour
         if (lampuJumpscareSeloker != null) lampuJumpscareSeloker.gameObject.SetActive(false);
         if (panelGameOver != null) panelGameOver.SetActive(false);
         if (blackoutCanvas != null) blackoutCanvas.alpha = 0f;
+        if (audioSourceAmbient != null) audioSourceAmbient.Stop();
 
         if (toilet1 != null)
         {

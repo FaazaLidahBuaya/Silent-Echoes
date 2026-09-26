@@ -525,7 +525,7 @@ public class DokumenManager : MonoBehaviour
     /// <summary>
     /// Membuka panel dokumen dan OTOMATIS MENJEDA (PAUSE) GAME
     /// </summary>
-    public void BukaPanelDokumen()
+    public void BukaPanelDokumen(AudioClip clipKustom = null)
     {
         // Tutup tas inventory item jika sedang terbuka agar tidak bertabrakan
         if (InventoryManager.Instance != null && InventoryManager.Instance.inventoryAktif)
@@ -553,10 +553,11 @@ public class DokumenManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 3. Mainkan audio jika ada
-        if (audioSource != null && sfxBukaBuku != null)
+        // 3. Mainkan audio jika ada (hanya tepat 1 kali)
+        AudioClip clipToPlay = clipKustom != null ? clipKustom : sfxBukaBuku;
+        if (audioSource != null && clipToPlay != null)
         {
-            audioSource.PlayOneShot(sfxBukaBuku);
+            audioSource.PlayOneShot(clipToPlay);
         }
 
         // Tampilkan daftar dokumen
@@ -590,7 +591,7 @@ public class DokumenManager : MonoBehaviour
     /// <summary>
     /// Menambahkan dokumen baru yang diambil oleh pemain di dunia game
     /// </summary>
-    public void TambahDokumen(DokumenItem dataBaru, bool bukaLangsung = false)
+    public void TambahDokumen(DokumenItem dataBaru, bool bukaLangsung = false, AudioClip sfxAmbil = null)
     {
         if (dataBaru == null) return;
 
@@ -616,8 +617,18 @@ public class DokumenManager : MonoBehaviour
         // Jika diset untuk langsung dibaca saat diambil
         if (bukaLangsung)
         {
-            BukaPanelDokumen();
+            // Buka panel dokumen dan mainkan 1 suara saja (sfxAmbil jika ada, atau sfxBukaBuku)
+            AudioClip clip = (sfxAmbil != null) ? sfxAmbil : sfxBukaBuku;
+            BukaPanelDokumen(clip);
             BukaDetailDokumen(dataBaru);
+        }
+        else
+        {
+            // Jika tidak langsung dibuka, putar suara ambil jika ada
+            if (sfxAmbil != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(sfxAmbil);
+            }
         }
     }
 
